@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Work Summary"
+  short_description: "Summarize daily and monthly work journals."
+  default_prompt: "总结今日工作"
