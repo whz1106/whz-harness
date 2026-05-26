@@ -1,0 +1,34 @@
+task:
+  name: ""
+  date: ""
+
+hardware:
+  machine: ""
+  gpu: ""
+  cpu: ""
+  memory: ""
+
+model:
+  name: ""
+  path: ""
+  dtype: ""
+
+runtime:
+  framework: ""
+  version: ""
+  command: ""
+
+parameters:
+  tensor_parallel_size: null
+  max_model_len: null
+  gpu_memory_utilization: null
+  batch_size: null
+  concurrency: null
+
+metrics:
+  ttft: null
+  tps: null
+  latency: null
+  memory_used: null
+
+notes: ""

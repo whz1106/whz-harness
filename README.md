@@ -1,17 +1,23 @@
-# whz-skills
+# whz-harness
 
-whz 个人自维护的 OpenCode/Claude Skills 合集。
+`whz-harness` 是给 agent 使用的轻量开发/测试工作脚手架。
 
-## 技能列表
+上传到仓库的是规则、模板和 skills，不上传实际项目日志、测试结果或大文件。
 
-| 技能 | 描述 |
-|------|------|
-| [今日总结.skill](./今日总结.skill/) | 每日工作总结与月度总结自动生成。读取 `daily-work-journal/` 原始日志，合并为结构化日报/月报。 |
+## 包含内容
 
-## 使用方式
+- `AGENTS.md`: 各 agent 的工作规则。
+- `CLAUDE.md`: Claude Code 的工作规则。
+- `templates/`: 可复制到项目中的记录模板。
+- `skills/`: 可复用 agent skills。
 
-将所需 skill 目录放置到 OpenCode/Claude 的 skills 目录中，或通过 `Skill` 工具加载。
+## 不包含内容
+
+- 真实项目的 `testlog/` 内容。
+- 真实项目的 `specs/` 内容。
+- benchmark 原始输出、大日志、截图、dump、trace。
+- `.env`、token、密钥、私有配置。
 
 ## 日志仓库
 
-本仓库配套的日志数据存储在独立的 [daily-work-journal](https://github.com/whz1106/daily-work-journal) 仓库中。
+本仓库不包含日志数据。日志存储在独立的 [daily-work-journal](https://github.com/whz1106/daily-work-journal) 仓库中。
