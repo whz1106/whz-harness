@@ -158,6 +158,45 @@ def grouped_summary(items: list[str]) -> dict[str, list[str]]:
     return groups
 
 
+def detail_lines_for_content(content: str) -> list[str]:
+    lines = []
+    for line in content.splitlines():
+        if line.startswith("# "):
+            continue
+        lines.append(line.rstrip())
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+    return lines
+
+
+def render_details(raw_entries: list[tuple[Path, str]], session_entry: Optional[str]) -> str:
+    lines = ["## 工作记录详情", ""]
+    has_details = False
+
+    for file_path, content in raw_entries:
+        details = detail_lines_for_content(content)
+        if not details:
+            continue
+        has_details = True
+        lines.extend(details[:80])
+        lines.append("")
+
+    if session_entry:
+        details = detail_lines_for_content(redact(session_entry))
+        if details:
+            has_details = True
+            lines.extend(details[:80])
+            lines.append("")
+
+    if not has_details:
+        lines.append("- 暂无更详细记录")
+        lines.append("")
+
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def render_sections(title: str, groups: dict[str, list[str]], fallback: str) -> str:
     lines = [f"# {title}", ""]
     for heading, values in groups.items():
@@ -189,7 +228,11 @@ def daily(args: argparse.Namespace) -> None:
             bullets.append(redact(args.entry.strip()))
 
     groups = grouped_summary(bullets)
-    output = render_sections(f"{date_text} 今日工作总结", groups, "暂无记录")
+    output = (
+        render_sections(f"{date_text} 今日工作总结", groups, "暂无记录").rstrip()
+        + "\n\n"
+        + render_details(raw_entries, args.entry)
+    )
     paths["daily_file"].write_text(output, encoding="utf-8")
     print(paths["daily_file"])
     print()
