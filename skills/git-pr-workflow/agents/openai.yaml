@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git PR Workflow"
+  short_description: "Draft safe commits and high-signal PRs."
+  default_prompt: "使用 $git-pr-workflow 检查本地改动、整理提交，并生成中文 PR/MR 内容。"
