@@ -10,6 +10,7 @@
 - `CLAUDE.md`: Claude Code 的工作规则。
 - `templates/`: 可复制到项目中的记录模板。
 - `skills/`: 可复用 agent skills。
+  - `skills/modelscope-api/`: ModelScope OpenAPI、下载、发布、打包、环境检查相关 skill。
 
 ## 不包含内容
 

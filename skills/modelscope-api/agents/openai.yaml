@@ -1,0 +1,4 @@
+interface:
+  display_name: "ModelScope API"
+  short_description: "Use ModelScope OpenAPI and SDK downloads."
+  default_prompt: "Use ModelScope OpenAPI and SDK/CLI tooling to inspect, manage, publish, deploy, and download ModelScope resources."
