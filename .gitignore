@@ -4,6 +4,10 @@
 *.key
 *.token
 
+# local/ 是本地投放区：只保留说明文件，其余内容（真实地址、受控资料）不进 git
+local/*
+!local/README.md
+
 *.log
 *.dump
 *.trace

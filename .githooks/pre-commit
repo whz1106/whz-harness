@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# 提交前扫描：命中敏感内容就阻止提交。
+# 安装：bash scripts/scan-sensitive.sh --install-hook   （或 git config core.hooksPath .githooks）
+# 急用时可 git commit --no-verify 跳过，但先想清楚为什么。
+set -uo pipefail
+
+REPO="$(git rev-parse --show-toplevel)"
+[ -x "$REPO/scripts/scan-sensitive.sh" ] || exit 0
+exec bash "$REPO/scripts/scan-sensitive.sh"
