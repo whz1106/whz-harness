@@ -25,7 +25,15 @@
 
 > 脱敏说明：内网地址已换成 `$AGC64F_HOST` / `$AGC64F_BIND` 占位符，真实值见 `local/agc64f.local.md`。
 
-## 二、未入库（只登记，本体在别处）
+## 二、在别的仓库里（本目录只放指针）
+
+| material | 指针 | 本体在哪 | 状态 |
+| --- | --- | --- | --- |
+| `four-test` | `materials/four-test/README.md` | 私有仓 `whz1106/four-test-v1`（当前）、`whz1106/four-test`（旧） | 当前版最后提交 2026-09-21 |
+
+**为什么不做 submodule**：本仓库是公开的，挂一个指向私有仓的 submodule，别人 clone 会直接报错；而且要求"clone 一个仓库就能用"。所以只写指针，用的时候 `gh repo clone`。
+
+## 三、未入库（只登记，本体在别处）
 
 | 资产 | 文件 | 大小 | sha256 |
 | --- | --- | --- | --- |
@@ -42,12 +50,12 @@
 **在哪：**本机客户资料目录（真实路径见 `local/agc64f.local.md`，不入库）；用文件名 glob 即可定位，例如 `glob **/AGC64F-LLM-部署包.zip`。
 **服务器侧权威副本：**`/data/whz/llm/`（部署）、`/data/whz/whz-data/`（数据与模型资产根）。
 
-## 三、待补
+## 四、待补
 
 | 想补的 | 从哪取 |
 | --- | --- |
 | 原始运行日志 | 部署包 zip 里的 `备选方案_vllm-router/*.log`、`记录/*.log` |
-| four-test 项目资料与脚本 | 项目仓 `four-test-v1`（私有），或服务器 `/data/whz/four-test-v1` |
+| four-test 的资料本体 | 项目仓 `whz1106/four-test-v1`（私有），或服务器 `/data/whz/four-test-v1` |
 
 ## 注意
 

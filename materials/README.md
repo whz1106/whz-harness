@@ -33,6 +33,7 @@ materials/<name>/
 | 情况 | 怎么做 |
 | --- | --- |
 | 纯文本资料（md / conf / sh / py） | 直接放进 `materials/<name>/`，并在 `materials/INDEX.md` 登记 |
+| **资料本体在别的仓库** | 建 `materials/<name>/README.md`，**只写指针**（仓库地址 + 顶层导航 + 前置条件 + 坑的位置）；不复制、不做 submodule |
 | 二进制、受控 PDF、zip、> 5 MB 的数据 | **本体不入库**：放本机/服务器/NAS，在 `materials/INDEX.md` 记文件名 + 大小 + sha256，真实路径写 `local/` |
 | 客户名/内网地址出现在文本里 | 入库前脱敏：地址换网段或 `$占位符`，客户名换机器代号 |
 | 只在一台机器上要用的 | 放 `local/`，不进 `materials/` |
