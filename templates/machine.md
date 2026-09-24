@@ -1,10 +1,10 @@
 ---
-description: 新接一台机器时的 env/<机器>.md 骨架：硬事实 + 禁改项 + 坑，供 agent 动手前读。
+description: 新接一台机器时的 machines/<机器>.md 骨架：硬事实 + 禁改项 + 坑，供 agent 动手前读。
 ---
 
 # 机器：<代号>
 
-> 复制到 `~/whz-harness/env/<代号>.md`，删掉本行与所有 `<…>`；然后在 `env/AGENTS.md` 的机器索引里加一行，把它的禁改项补进 `env/RULES.md`。
+> 复制到 `~/whz-harness/machines/<代号>.md`，删掉本行与所有 `<…>`；然后在 `machines/AGENTS.md` 的机器索引里加一行，把它的禁改项补进 `machines/RULES.md`。
 
 ## 接入
 
@@ -44,6 +44,6 @@ ssh <别名或命令>
 
 ## 相关
 
-- 通用坑与铁律：`env/AGENTS.md`
+- 通用坑与铁律：`machines/AGENTS.md`
 - 这台机器上的项目：`agent-memory/projects/<x>.md`
 - 资料与脚本：`materials/INDEX.md`

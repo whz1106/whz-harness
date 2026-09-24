@@ -44,7 +44,7 @@ description: AGENTS.md 参考模板：新建项目或新接一台机器时，按
 
 | 我想…… | 去哪 |
 | --- | --- |
-| 查这台机器/这个环境的约束 | `~/whz-harness/env/AGENTS.md` → `env/<机器>.md` |
+| 查这台机器/这个环境的约束 | `~/whz-harness/machines/AGENTS.md` → `machines/<机器>.md` |
 | 查已有结论、写新结论 | `~/whz-harness/agent-memory/AGENTS.md` |
 | 拿外部资料与脚本 | `~/whz-harness/materials/INDEX.md` |
 | 本机私有值 | `~/whz-harness/local/` |

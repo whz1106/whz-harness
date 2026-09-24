@@ -4,7 +4,7 @@
 # 单一仓库 $HOME/whz-harness，内含四层（每层一个 marker block）：
 #   personal-memory  仓库根           规则 + 个人记忆：偏好、工具链、编码/提交习惯、通用坑
 #   agent-memory     agent-memory/    记忆系统：索引、项目记忆、捕获区
-#   env-memory       env/             业务环境信息与硬约束（kata/vfio/docker），高频更新
+#   machines-memory       machines/             业务环境信息与硬约束（kata/vfio/docker），高频更新
 #   local-memory     local/           本地投放区（gitignore）：真实地址、受控资料，clone 后自己放
 #
 # 用法: bash ~/whz-harness/scripts/sync.sh [--no-pull]
@@ -33,7 +33,7 @@ if [ -z "${HOME:-}" ] || [ ! -d "$HOME" ]; then
 fi
 
 REPO="${MEMORY_REPO:-$HOME/whz-harness}"
-LAYERS="${MEMORY_LAYERS:-personal-memory: agent-memory:agent-memory env-memory:env local-memory:local}"
+LAYERS="${MEMORY_LAYERS:-personal-memory: agent-memory:agent-memory machines-memory:machines local-memory:local}"
 
 [ -d "$REPO/.git" ] || {
 	printf '[sync] %s 不是 git 仓库，中止\n' "$REPO" >&2

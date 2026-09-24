@@ -17,7 +17,7 @@ agent-memory/      记忆系统
   ├── projects/      项目记忆（每个项目一个文件）
   └── notes/inbox.md 捕获区
 
-env/               业务环境信息与硬约束（更新频率最高）
+machines/               业务环境信息与硬约束（更新频率最高）
   ├── AGENTS.md      铁律 + 机器索引                                                  ← 注入
   ├── 64f.md         机器事实：kata / docker / vfio / 拓扑 / 坑
   └── RULES.md 禁改项清单（必须经我明确同意）
@@ -28,7 +28,7 @@ materials/         外部依赖资料
   └── agc64f-llm-deploy/   已入库的部署包文本（20 文件 / 236 KB）
 
 skills/            常用 skills
-templates/         AGENTS.md / env-machine.md 参考模板
+templates/         AGENTS.md / machine.md 参考模板
 scripts/           sync（注入）/ capture（捕获）/ scan-sensitive（脱敏扫描）
 .githooks/         pre-commit：提交前自动扫描
 local/             本地投放区（gitignore，只有 README.md 入库）                      ← 注入
@@ -40,10 +40,10 @@ local/             本地投放区（gitignore，只有 README.md 入库）     
 | --- | --- | --- | --- |
 | `personal-memory` | 根 `AGENTS.md` / `RULES.md` | 规则、偏好、习惯、通用坑 | ✅ |
 | `agent-memory` | `agent-memory/AGENTS.md` | 记忆系统索引（长文按需读） | ✅ |
-| `env-memory` | `env/AGENTS.md` | 环境铁律 + 机器索引 | ✅ |
+| `machines-memory` | `machines/AGENTS.md` | 环境铁律 + 机器索引 | ✅ |
 | `local-memory` | `local/AGENTS.md` | 真实地址、受控资料路径 | ❌ gitignore |
 
-**只有 `AGENTS.md` / `RULES.md` 被注入**，`personal.md`、`projects/`、`env/<机器>.md`、`materials/` 只进索引，由 agent 按需 `read` —— 否则每个会话都在烧那几百行手册的 token。
+**只有 `AGENTS.md` / `RULES.md` 被注入**，`personal.md`、`projects/`、`machines/<机器>.md`、`materials/` 只进索引，由 agent 按需 `read` —— 否则每个会话都在烧那几百行手册的 token。
 
 ## 新机器 / 新 agent
 
@@ -61,23 +61,23 @@ bash scripts/sync.sh                                        # Windows: powershel
 | 工作流 | 入口 | skill |
 | --- | --- | --- |
 | 记忆：inbox → 提升到正式文件 | `agent-memory/AGENTS.md` | `harness-memory` |
-| 环境：动手前读约束、破坏性操作必须经同意 | `env/AGENTS.md` → `env/RULES.md` | `env-ops-guard` |
+| 环境：动手前读约束、破坏性操作必须经同意 | `machines/AGENTS.md` → `machines/RULES.md` | `machine-ops-guard` |
 | 资料：外部资料入库 + 登记 + 适配 | `materials/README.md` → `INDEX.md` | `materials-intake` |
 
 ```bash
-bash scripts/capture.sh "事实"                     # 捕获一条（只提交该层 inbox）
-bash scripts/capture.sh "某机器的坑" --layer env
+bash scripts/capture.sh "事实"                     # 捕获一条（只提交 inbox）
+bash scripts/capture.sh "某机器的坑" --tag agc64f
 bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意跳过 local/）
 ```
 
-改过注入层（`AGENTS.md` / `RULES.md` / `agent-memory/*` / `env/*`）后必须跑一次 `sync`。
+改过注入层（`AGENTS.md` / `RULES.md` / `agent-memory/*` / `machines/*`）后必须跑一次 `sync`。
 
 ## skills 一览
 
 | skill | 用途 |
 | --- | --- |
 | `agent-bootstrap` | 新项目/新机器：生成 `AGENTS.md`、挂记忆与资料、装注入 |
-| `env-ops-guard` | 动远程机器前的闸门：禁改项、必须经同意、故障信号停手 |
+| `machine-ops-guard` | 动远程机器前的闸门：禁改项、必须经同意、故障信号停手 |
 | `materials-intake` | 外部资料收编：分流、脱敏、登记、写标准 README |
 | `harness-memory` | 记忆读写流程与命令 |
 | `git-pr-workflow` | 提交与 PR/MR 规范（`references/commit-pr-format.md`） |

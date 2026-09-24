@@ -52,4 +52,4 @@ OCR/YOLO/视频 Kata 压测必须按此顺序，**不得跳步、不得重试**�
 
 ## 与本机其他项目的关系
 
-同一台 `agc64f`。LLM 部署见同目录的 `agc64f-llm-deploy.md`。两者共享的红线在 `env/RULES.md`。
+同一台 `agc64f`。LLM 部署见同目录的 `agc64f-llm-deploy.md`。两者共享的红线在 `machines/RULES.md`。

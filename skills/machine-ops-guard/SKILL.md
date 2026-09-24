@@ -1,6 +1,6 @@
 ---
-name: env-ops-guard
-description: 动任何远程机器之前的闸门。读 env/ 下的机器事实与禁改项，把「必须经用户明确同意」的操作摆到台面上，故障信号出现时立即停手并报告。当任务涉及 kata、vfio、pci、docker 容器、GPU 掉卡、reboot、或任何客户现场机器时使用。
+name: machine-ops-guard
+description: 动任何远程机器之前的闸门。读 machines/ 下的机器事实与禁改项，把「必须经用户明确同意」的操作摆到台面上，故障信号出现时立即停手并报告。当任务涉及 kata、vfio、pci、docker 容器、GPU 掉卡、reboot、或任何客户现场机器时使用。
 ---
 
 # 远程环境操作闸门
@@ -9,8 +9,8 @@ description: 动任何远程机器之前的闸门。读 env/ 下的机器事实�
 
 ## 动手前（每次都做）
 
-1. 读 `~/whz-harness/env/AGENTS.md`（铁律 + 机器索引）→ 读对应 `env/<机器>.md`。
-2. 读 `~/whz-harness/env/RULES.md`（禁改项全文）。
+1. 读 `~/whz-harness/machines/AGENTS.md`（铁律 + 机器索引）→ 读对应 `machines/<机器>.md`。
+2. 读 `~/whz-harness/machines/RULES.md`（禁改项全文）。
 3. 读 `~/whz-harness/agent-memory/projects/<项目>.md`（该机器上的项目结论与强制顺序）。
 4. **只读**收集现场：`/proc/cmdline`、`driverctl list-overrides | wc -l`、目标 GPU 的 BDF/driver/IOMMU 组、Kata 配置校验和、docker/containerd/kata 服务状态、当前容器与 QEMU/shim 进程。
 

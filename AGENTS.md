@@ -7,7 +7,7 @@
 
 | 我要…… | 去哪 |
 | --- | --- |
-| 知道这台机器/这个环境的硬约束 | `env/AGENTS.md` → `env/RULES.md`（**动手前必读**） |
+| 知道这台机器/这个环境的硬约束 | `machines/AGENTS.md` → `machines/RULES.md`（**动手前必读**） |
 | 查已有记忆、写新记忆 | `agent-memory/AGENTS.md` |
 | 拿外部资料（部署包、脚本、项目资料） | `materials/README.md` → `materials/INDEX.md` |
 | 复用技能 | `skills/` |
@@ -35,7 +35,7 @@
 - 本仓库被注入到这些用户级上下文文件（marker block 包裹，块内勿手改）：
   `~/.omp/agent/AGENTS.md`、`~/.omp/agent/RULES.md`、`~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md`、`~/.gemini/GEMINI.md`、`~/.copilot/copilot-instructions.md`。
 - `skills/*/SKILL.md` 会镜像到 `~/.omp/agent/skills/`。
-- 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `env-memory`（环境）/ `local-memory`（本地投放）。
+- 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
 
 ## 偏好
 
@@ -67,8 +67,8 @@
 
 ## 三条工作流
 
-1. **记忆**：新东西先落 `agent-memory/notes/inbox.md` 一行 → 稳定后提升到 `agent-memory/`（个人/项目）或 `env/` → 删掉 inbox 里那行。入口见 `agent-memory/AGENTS.md`。
-2. **环境**：任何远程机器操作前先读 `env/AGENTS.md` 与对应 `env/<机器>.md`；`env/RULES.md` 里列的禁改项**必须经明确同意**。见 skill `env-ops-guard`。
+1. **记忆**：新东西先落 `agent-memory/notes/inbox.md` 一行 → 稳定后提升到 `agent-memory/`（个人/项目）或 `machines/` → 删掉 inbox 里那行。入口见 `agent-memory/AGENTS.md`。
+2. **环境**：任何远程机器操作前先读 `machines/AGENTS.md` 与对应 `machines/<机器>.md`；`machines/RULES.md` 里列的禁改项**必须经明确同意**。见 skill `machine-ops-guard`。
 3. **资料**：外部资料进 `materials/`，同时在 `materials/INDEX.md` 登记（文件名 + 大小 + sha256），受控件与大数据只留指针。见 skill `materials-intake`。
 
 ## 不要记录
@@ -81,5 +81,5 @@
 ## 维护约定
 
 - 每条记忆写「事实 + 时间」；不确定的结论标 `[推测]`。
-- 改过本文件 / `RULES.md` / `agent-memory/*` / `env/*` 后必须跑一次 `scripts/sync.*`，否则注入的还是旧的。
+- 改过本文件 / `RULES.md` / `agent-memory/*` / `machines/*` 后必须跑一次 `scripts/sync.*`，否则注入的还是旧的。
 - 提交信息：`memory:` / `env:` / `materials:` / `capture:`；不要重写已推送历史。

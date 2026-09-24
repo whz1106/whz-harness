@@ -21,7 +21,7 @@ agent-memory/
 | --- | --- |
 | 想知道我的偏好/习惯/工具链 | `agent-memory/personal.md` |
 | 要动某个项目 | `agent-memory/projects/<项目>.md`（先看这个，再按它的指引读细节） |
-| 要动某台机器 | `env/AGENTS.md` → `env/<机器>.md`（**环境约束优先于项目记忆**） |
+| 要动某台机器 | `machines/AGENTS.md` → `machines/<机器>.md`（**环境约束优先于项目记忆**） |
 | 要外部资料/脚本 | `materials/INDEX.md` |
 
 ## 写入规则（防膨胀）
@@ -42,6 +42,6 @@ agent-memory/
 | 个人偏好与工作方式 | `personal.md` | 交付要可验证、回答要短、破坏性操作先确认 |
 | 项目：64F 大模型多实例部署 | `projects/agc64f-llm-deploy.md` | 三个模型三选一，Docker+Kata 混合，nginx :8000 聚合 |
 | 项目：four-test v1 多模态压测 | `projects/four-test-v1.md` | OCR/YOLO/ASR/TTS/视频 64 卡压测，CUDA-719 后的强制顺序 |
-| 环境（机器与硬约束） | `../env/AGENTS.md` | kata/vfio/docker 的禁改项，动手前必读 |
+| 环境（机器与硬约束） | `../machines/AGENTS.md` | kata/vfio/docker 的禁改项，动手前必读 |
 | 外部资料 | `../materials/INDEX.md` | 部署包、脚本、受控原件指针 |
 | 怎么用这套记忆 | skill `harness-memory` | 读写流程与命令 |

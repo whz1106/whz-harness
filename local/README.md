@@ -6,7 +6,7 @@
 
 | 文件 | 内容 | 谁读它 |
 | --- | --- | --- |
-| `agc64f.local.md` | `$AGC64F_HOST` / `$AGC64F_BIND` 的真实值、ssh 别名、现场接入方式 | `env/64f.md` 里引用 |
+| `agc64f.local.md` | `$AGC64F_HOST` / `$AGC64F_BIND` 的真实值、ssh 别名、现场接入方式 | `machines/agc64f.md` 里引用 |
 | `artifacts.local.md` | 受控原件与大型数据的**真实路径**（甲方 PDF、部署包 zip、测试数据） | `materials/INDEX.md` 里引用 |
 | 任意 `*.md` | 其它不想公开的现场记录 | 按文件名被引用 |
 

@@ -23,7 +23,7 @@ materials/<name>/
 ## 已知坑（现象 → 原因 → 处置）
 ## 相关记忆与环境
 - 项目记忆：agent-memory/projects/<x>.md
-- 机器约束：env/<机器>.md、env/RULES.md
+- 机器约束：machines/<机器>.md、machines/RULES.md
 ```
 
 **为什么要这个骨架**：AI 读完 README 就知道"能不能跑、要什么前置、坑在哪"，不用把整个 `docs/` 读进来。索引不清晰的材料等于没放。
@@ -53,4 +53,4 @@ bash scripts/scan-sensitive.sh        # 提交前扫一遍
 
 - 登记表：`INDEX.md`
 - 放材料的流程：skill `materials-intake`
-- 机器约束（跑脚本前必读）：`env/AGENTS.md`
+- 机器约束（跑脚本前必读）：`machines/AGENTS.md`

@@ -54,17 +54,17 @@ mkdir -p ~/whz-harness/materials/<name>/{docs,scripts}
 ## 四、登记与挂接
 
 1. `materials/INDEX.md` 加一行：material 名 / 路径 / 是什么 / 规模；未入库的补文件名 + 大小 + sha256。
-2. 在该 material 的 `README.md` 里挂指针：相关 `agent-memory/projects/<项目>.md`、`env/<机器>.md`、`env/RULES.md`。
+2. 在该 material 的 `README.md` 里挂指针：相关 `agent-memory/projects/<项目>.md`、`machines/<机器>.md`、`machines/RULES.md`。
 3. 如果资料对应一个已有项目记忆，在项目记忆里反向加一行指向 `materials/<name>/README.md`。
 4. 收尾：
 
    ```bash
    bash ~/whz-harness/scripts/scan-sensitive.sh
-   bash ~/whz-harness/scripts/capture.sh "materials/<name>：<一句话用途>" --layer agent-memory
+   bash ~/whz-harness/scripts/capture.sh "materials/<name>：<一句话用途>" --tag materials
    ```
 
 ## 五、让 AI 真的用得上
 
 - README 的「怎么用」要**可复制执行**，含 `cd` 与完整命令。
-- 脚本涉及远程机器时，README 里写明"动手前先读 `env/RULES.md`"，并在「已知坑」里写清故障信号。
+- 脚本涉及远程机器时，README 里写明"动手前先读 `machines/RULES.md`"，并在「已知坑」里写清故障信号。
 - 资料里已有结论的，提炼一句进 `agent-memory/projects/<项目>.md`，别让 agent 每次去翻 500 行手册。

@@ -11,7 +11,7 @@ description: 读写 ~/whz-harness 这套记忆系统：查已有记忆、追加�
 | --- | --- | --- | --- |
 | `personal-memory` | 仓库根 | 规则、偏好、工具链、编码/提交习惯、通用坑 | ✅ |
 | `agent-memory` | `agent-memory/` | 记忆系统：个人长文、项目记忆、捕获区 | ✅（长文按需读） |
-| `env-memory` | `env/` | 业务环境信息与硬约束（kata/vfio/docker），高频更新 | ✅ |
+| `machines-memory` | `machines/` | 业务环境信息与硬约束（kata/vfio/docker），高频更新 | ✅ |
 | `local-memory` | `local/` | 本机私有：真实地址、受控路径（gitignore） | ✅ |
 
 ## 先判断去哪
@@ -21,7 +21,7 @@ description: 读写 ~/whz-harness 这套记忆系统：查已有记忆、追加�
 | 跨项目偏好、习惯、通用坑 | 根 `AGENTS.md`（或 `agent-memory/personal.md` 长文） |
 | 必须每轮常驻的硬约束 | 根 `RULES.md` |
 | 项目结论、强制流程、坑 | `agent-memory/projects/<项目>.md` |
-| 机器事实、禁改项、故障信号 | `env/<机器>.md`（禁改项同时进 `env/RULES.md`） |
+| 机器事实、禁改项、故障信号 | `machines/<机器>.md`（禁改项同时进 `machines/RULES.md`） |
 | 外部资料与脚本 | `materials/<name>/` + 登记 `materials/INDEX.md` |
 | 还没想清的零散事实 | `agent-memory/notes/inbox.md` |
 | 本机私有值（真实地址、受控路径） | `local/`（**绝不入库**） |
@@ -31,7 +31,7 @@ description: 读写 ~/whz-harness 这套记忆系统：查已有记忆、追加�
 ```bash
 git -C ~/whz-harness pull --ff-only
 sed -n '1,120p' ~/whz-harness/agent-memory/AGENTS.md    # 记忆索引
-sed -n '1,120p' ~/whz-harness/env/AGENTS.md             # 环境铁律 + 机器索引
+sed -n '1,120p' ~/whz-harness/machines/AGENTS.md             # 环境铁律 + 机器索引
 ls ~/whz-harness/agent-memory/projects ~/whz-harness/materials
 ```
 
@@ -40,13 +40,13 @@ ls ~/whz-harness/agent-memory/projects ~/whz-harness/materials
 ## 写入
 
 ```bash
-# 零散事实（只提交该层 inbox）
-bash ~/whz-harness/scripts/capture.sh "事实"                    # → agent-memory 层
-bash ~/whz-harness/scripts/capture.sh "某机器的坑" --layer env   # → env 层
+# 零散事实（只提交 inbox，一次一条）
+bash ~/whz-harness/scripts/capture.sh "事实"                    # → agent-memory/notes/inbox.md
+bash ~/whz-harness/scripts/capture.sh "某机器的坑" --tag agc64f      # 加个前缀方便分类
 
 # 正式文件：直接编辑后提交
 git -C ~/whz-harness pull --ff-only
-# 编辑 agent-memory/... 或 env/...
+# 编辑 agent-memory/... 或 machines/...
 git -C ~/whz-harness add -A
 git -C ~/whz-harness commit -m "memory: <摘要>"     # 环境用 env:，资料用 materials:
 git -C ~/whz-harness push

@@ -1,6 +1,6 @@
 # 禁改项清单（机器环境）
 
-这些是 `env/` 下登记机器的硬约束，优先级高于任何「把任务做完」的诉求。违反任一条都可能造成机器不可恢复的损坏。执行流程见 skill `env-ops-guard`。
+这些是 `machines/` 下登记机器的硬约束，优先级高于任何「把任务做完」的诉求。违反任一条都可能造成机器不可恢复的损坏。执行流程见 skill `machine-ops-guard`。
 
 1. **禁止** VFIO/PCI bind·unbind、`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、安装或启用自动绑卡服务。未经用户明确授权一律不做。
 2. **禁止**修改 Kata 全局配置：`/etc/kata-containers/configuration.toml`、`/opt/kata/share/defaults/kata-containers/**`。

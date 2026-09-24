@@ -4,7 +4,7 @@
 
 ## 一、远程环境：必须经我明确同意
 
-对 `env/` 里登记的任何机器（目前是 `agc64f`），**未经明确同意一律不做**：
+对 `machines/` 里登记的任何机器（目前是 `agc64f`），**未经明确同意一律不做**：
 
 1. VFIO / PCI 相关：`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、任何 PCI driver bind/unbind、安装或启用自动绑卡服务。
 2. Kata 全局配置：`/etc/kata-containers/configuration.toml`、`/opt/kata/share/defaults/kata-containers/**`。
