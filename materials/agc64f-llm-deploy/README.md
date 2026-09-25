@@ -1,10 +1,9 @@
 # AGC64F 大模型部署包（Docker + Kata + Nginx）
 
 一台 64 卡 DX8190 机器上，用 **Docker + Kata(VFIO 直通) 混合多实例 + Nginx 聚合** 的方式
-部署三个已验收的模型。**三个模型互斥，同一时间只能跑一个。**
+部署三个已验收的模型、四种资源方案（35B 有 32 卡和 64 卡两种）。**不同方案互斥，同一时间只能跑一个。**
 
-> 这里只有脚本、配置、文档、实测记录。**不含模型权重，也不含镜像**（体积原因），
-> 模型在 `/data/models/`，镜像用现成的 `dx-vllm:0.21.0`。
+> 这里只有脚本、配置、文档、实测记录。**不含模型权重，也不含镜像**；权重和镜像文件由用户保存在个人硬盘，部署时再按本机资产索引核对与投放。下述 `/data/models/` 和 `dx-vllm:0.21.0` 是既有服务器部署路径与镜像标签，不能代替资产校验。
 
 ---
 
@@ -17,6 +16,7 @@
 | 完整流程（装、起、推理、压测、排障） | `部署与推理操作手册.md` |
 | nginx 怎么装、怎么切 | `nginx/README.md` |
 | **给 AI 看**（部署细节、坑、实测数据） | `AI_CONTEXT.md` |
+| 找权重、镜像及 32/64 卡方案 | `ASSETS.md`，本机路径另见 `local/assets.local.md` |
 | 甲方原始手册 / 性能基线 | `原始资料/` |
 | Kata 手册 / 环境红线原文 | `参考资料/` |
 | 方案二（vLLM router，可选） | `备选方案_vllm-router/` |
@@ -78,6 +78,8 @@ bash /root/start-sh/Start_Qwen3.6-35B-A3B-FP8.sh          # 35B：32 卡 / 8 实
 bash /root/start-sh/Start_Qwen3.5-122B-int4.sh            # 122B：64 卡 / 8 实例 / TP=8
 bash /root/start-sh/Start_DeepSeek-R1-Distill-Llama-70B.sh # 70B：64 卡 / 4 实例 / TP=16
 ```
+
+35B 的 64 卡可选方案用 `ENABLE_KATA=1 bash /root/start-sh/Start_Qwen3.6-35B-A3B-FP8.sh`；既有资料标为未在本机实测，须先核对现场拓扑、资产和授权边界，不作为已验收的一键流程。
 
 脚本会自动：清旧容器（按名字）→ 切 nginx → 设 `/dev/shm=300G` → **先起 Kata 再起 Docker**。
 就绪约 **10–30 分钟**。

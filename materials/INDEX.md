@@ -7,7 +7,9 @@
 
 | material | 路径 | 是什么 | 规模 |
 | --- | --- | --- | --- |
-| `agc64f-llm-deploy` | `materials/agc64f-llm-deploy/` | 64F 大模型多实例部署包（Docker + Kata + nginx）的**文本部分** | 20 文件 / 236 KB |
+| `agc64f-llm-deploy` | `materials/agc64f-llm-deploy/` | 64F 大模型多实例部署包（Docker + Kata + nginx）的**文本部分** | 文档、脚本与配置；权重和镜像不入库 |
+
+模型权重和镜像由用户保存在个人硬盘；名称、方案及本机索引填写方法见 `agc64f-llm-deploy/ASSETS.md`。本表不把未知大小或哈希写成已核验值。
 
 `agc64f-llm-deploy/` 内容速查：
 
@@ -20,7 +22,7 @@
 | `nginx/` | 4 份 conf + 说明（切换机制：软链 `active.conf`） |
 | `scripts/` | 3 个一键启动脚本 + `nginx_switch.sh` |
 | `原始资料/` | 性能基线 `AGC64F大模型性能测试结果整理.md`、`DEPLOY_TEST.md`（**PDF 原件未入库**） |
-| `参考资料/` | Kata 使用手册（675 行）、故障处置速查、项目红线原文（= `four-test-v1/AGENTS.md` 快照） |
+| `参考资料/` | Kata 使用手册（675 行）、故障处置速查、项目红线历史快照（不代替当前项目规则） |
 | `备选方案_vllm-router/run_v2.sh` | 方案二脚本（**日志未入库**） |
 
 > 脱敏说明：内网地址已换成 `$AGC64F_HOST` / `$AGC64F_BIND` 占位符，真实值见 `local/agc64f.local.md`。
@@ -29,7 +31,7 @@
 
 | material | 指针 | 本体在哪 | 状态 |
 | --- | --- | --- | --- |
-| `four-test` | `materials/four-test/README.md` | 私有仓 `whz1106/four-test-v1`（当前）、`whz1106/four-test`（旧） | 当前版最后提交 2026-09-21 |
+| `four-test` | `materials/four-test/README.md` | 私有仓 `whz1106/four-test-v1`（当前项目）、`whz1106/four-test`（旧） | 只保留导航；状态到项目仓核对 |
 
 **为什么不做 submodule**：本仓库是公开的，挂一个指向私有仓的 submodule，别人 clone 会直接报错；而且要求"clone 一个仓库就能用"。所以只写指针，用的时候 `gh repo clone`。
 

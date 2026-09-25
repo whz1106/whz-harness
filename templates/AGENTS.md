@@ -40,6 +40,16 @@ description: AGENTS.md 参考模板：新建项目或新接一台机器时，按
 - 测试记录：`testlog/YYYY-MM/...`（见 `~/whz-harness/AGENTS.md`）
 - 目录/命名：`<…>`
 
+### 项目技能
+
+项目专用技能统一放 `.agent/skills/<name>/SKILL.md`。在下表写明触发场景；agent 需要使用时先读对应文件，不依赖某个工具是否会自动扫描 `.agent/`。没有项目技能就删除本小节。
+
+| 何时使用 | 技能文件 |
+| --- | --- |
+| `<具体场景>` | `.agent/skills/<name>/SKILL.md` |
+
+个人通用技能仍在 `~/whz-harness/skills/`，不要复制到项目里；若项目需要覆盖通用技能，写清优先关系。
+
 ## 五、去哪看细节
 
 | 我想…… | 去哪 |

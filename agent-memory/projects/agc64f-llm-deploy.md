@@ -2,7 +2,7 @@
 
 > 完整上下文：`materials/agc64f-llm-deploy/AI_CONTEXT.md`（给 AI 的权威文档，567 行）
 > 人看的：`materials/agc64f-llm-deploy/部署与推理操作手册.md`（434 行）、`materials/agc64f-llm-deploy/llm操作.md`（147 行，最少命令集）
-> 机器事实：`hosts/agc64f.md`
+> 机器事实：`machines/agc64f.md`（历史快照；部署前核对在线状态）
 
 ## 目标
 
@@ -14,6 +14,8 @@
 | Qwen3.5-122B-A10B-GPTQ-Int4 | INT4 | 64 | 8 | 8 | d1–d4 + g1–g4 | `qwen122b.conf` |
 | DeepSeek-R1-Distill-Llama-70B | FP16 | 64 | 4 | 16 | d1–d2 + g1–g2 | `ds70b.conf` |
 | （可选）Qwen3.6-35B 16 实例 | FP8 | 64 | 16 | 4 | d1–d8 + g1–g8 | `qwen35b.conf` |
+
+35B 的 32/64 卡两种方案共用 `Start_Qwen3.6-35B-A3B-FP8.sh`；64 卡用 `ENABLE_KATA=1`，资料记录为尚未在本机实测。模型权重与镜像由用户保存在个人硬盘，本机位置见 `local/assets.local.md`，字段模板见 `templates/local-assets.md`。
 
 `d*` = Docker 实例（宿主 nvidia 卡，node0）；`g*` = Kata 实例（VFIO 直通卡，node1）。**统一入口 nginx :8000**，`least_conn` 转发到 8001–8016。
 

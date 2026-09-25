@@ -28,6 +28,7 @@ $SkillDir = Join-Path $HomeDir '.omp\agent\skills'
 $Mirrored = @()
 
 if (-not (Test-Path -LiteralPath (Join-Path $Repo '.git'))) { throw "$Repo 不是 git 仓库" }
+$Repo = (Resolve-Path -LiteralPath $Repo).ProviderPath
 
 # 就地替换 marker block；没有 block 就追加，block 之外的内容保持不动。
 function Set-ManagedBlock {
@@ -85,7 +86,7 @@ try {
 		$agentsPath = Join-Path $dir 'AGENTS.md'
 		if (-not (Test-Path -LiteralPath $agentsPath)) { continue }
 
-		$agentsText = [System.IO.File]::ReadAllText($agentsPath)
+		$agentsText = '> whz-harness 根目录（当前机器）：`' + $Repo + '`。下文相对路径均以此为基准。' + "`r`n`r`n" + [System.IO.File]::ReadAllText($agentsPath)
 		$rulesText = ''
 		$rulesPath = Join-Path $dir 'RULES.md'
 		if (Test-Path -LiteralPath $rulesPath) { $rulesText = [System.IO.File]::ReadAllText($rulesPath) }

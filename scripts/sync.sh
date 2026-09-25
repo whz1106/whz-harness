@@ -39,6 +39,7 @@ LAYERS="${MEMORY_LAYERS:-personal-memory: agent-memory:agent-memory machines-mem
 	printf '[sync] %s 不是 git 仓库，中止\n' "$REPO" >&2
 	exit 1
 }
+REPO="$(cd "$REPO" && pwd -P)"
 
 TMPDIR_SYNC="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_SYNC"' EXIT
@@ -93,7 +94,8 @@ for spec in $LAYERS; do
 	dir="$REPO${sub:+/$sub}"
 	[ -f "$dir/AGENTS.md" ] || continue
 
-	cat "$dir/AGENTS.md" >"$TMPDIR_SYNC/$name.agents"
+	printf '> whz-harness 根目录（当前机器）：`%s`。下文相对路径均以此为基准。\n\n' "$REPO" >"$TMPDIR_SYNC/$name.agents"
+	cat "$dir/AGENTS.md" >>"$TMPDIR_SYNC/$name.agents"
 	: >"$TMPDIR_SYNC/$name.rules"
 	cat "$TMPDIR_SYNC/$name.agents" >"$TMPDIR_SYNC/$name.combined"
 	if [ -f "$dir/RULES.md" ]; then

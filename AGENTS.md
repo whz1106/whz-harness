@@ -2,6 +2,14 @@
 
 > 这份文件有两个身份：**本仓库的 `AGENTS.md`**（在这里工作时自动读到），以及**用户级记忆**（`scripts/sync.*` 把它注入到 omp / Claude Code / Codex / Gemini / Copilot 的用户级配置）。
 > 只写**可复用的偏好与已验证事实**；一次性上下文不写，项目细节放 `agent-memory/projects/`。
+> 下文路径均相对 **whz-harness 仓库根目录**，不是当前工作项目；同步后的受管块开头会给出这台电脑上的绝对路径。
+
+## 每次开始任务
+
+1. 先读当前项目的 `AGENTS.md`（若存在），按它的触发条件读取项目 `.agent/skills/<name>/SKILL.md`。项目当前文件是项目规则的来源。
+2. 本文件提供个人偏好和导航。只按任务需要继续读对应层，不要每次加载全部机器手册、项目记忆和部署包。
+3. 涉及 `agc64f` 或其它登记机器时，**先读** `machines/AGENTS.md`、`machines/RULES.md`、`machines/<机器>.md`，再做只读现场核对。历史基线或 `local/` 的上次观察都不代表当前状态；ACS/VFIO/PCI/Kata 全局变更须用户明确授权。
+4. 涉及大模型部署时，再读 `materials/agc64f-llm-deploy/README.md`、`materials/agc64f-llm-deploy/ASSETS.md`，以及本机 `local/assets.local.md`（若存在）。权重和镜像在个人硬盘，不在 Git。
 
 ## 先看哪里（导航）
 
@@ -10,13 +18,14 @@
 | 知道这台机器/这个环境的硬约束 | `machines/AGENTS.md` → `machines/RULES.md`（**动手前必读**） |
 | 查已有记忆、写新记忆 | `agent-memory/AGENTS.md` |
 | 拿外部资料（部署包、脚本、项目资料） | `materials/README.md` → `materials/INDEX.md` |
-| 复用技能 | `skills/` |
+| 复用个人技能 | 本仓库 `skills/<name>/SKILL.md`；注入层会给出本仓库绝对路径 |
+| 使用项目自选技能 | 项目根目录 `.agent/skills/<name>/SKILL.md`，先读项目 `AGENTS.md` 的选择规则 |
 | 起一个新项目/新机器的规则文件 | `templates/AGENTS.md` + skill `agent-bootstrap` |
-| 本机私有值（真实地址、受控路径） | `local/`（不进 git） |
+| 本机私有索引（SSH 别名、受控资料与硬盘路径） | `local/AGENTS.md`（若存在；不进 git） |
 
 ## 用户与账号
 
-- GitHub：`whz1106`（`gh` 已登录，token scope：`repo`、`workflow`、`gist`、`read:org`；git 走 https）。
+- GitHub 账号：`whz1106`；优先用 `gh` 处理 GitHub 仓库与 PR。历史记录中 `gh` 已登录，执行需认证的操作前用 `gh auth status` 核对当前机器状态；git 走 https。
 - git identity：`whz <hzwang991106@gmail.com>`。
 - 交流默认中文；代码、标识符、命令保持英文。
 
@@ -24,10 +33,10 @@
 
 | 别名 | 系统 | 家目录 | 本仓库路径 |
 | --- | --- | --- | --- |
-| win-main | Windows 11 Pro x64 / Intel i5-14500 / Windows Terminal | `C:\Users\Administrator` | `~/whz-harness` |
-| mac | macOS | `~/` | `~/whz-harness` |
+| win-main | Windows 11 Pro x64 / Intel i5-14500 / Windows Terminal | `C:\Users\Administrator` | 推荐 `~/whz-harness` |
+| mac | macOS | `~/` | 推荐 `~/whz-harness` |
 
-`~/whz-harness` 在两端都是同一个相对位置，所以仓库里的路径引用跨机器通用。
+两端推荐克隆到各自家目录下的 `whz-harness`。若放在其它位置，以同步受管块给出的本机绝对路径为准；仓库内文档的相对路径始终以仓库根目录为基准。
 
 ## 工具链
 
@@ -35,6 +44,14 @@
 - 本仓库被注入到这些用户级上下文文件（marker block 包裹，块内勿手改）：
   `~/.omp/agent/AGENTS.md`、`~/.omp/agent/RULES.md`、`~/.claude/CLAUDE.md`、`~/.codex/AGENTS.md`、`~/.gemini/GEMINI.md`、`~/.copilot/copilot-instructions.md`。
 - `skills/*/SKILL.md` 会镜像到 `~/.omp/agent/skills/`。
+- 其它 agent 通过本文件的技能索引按需读取本仓库 `skills/<name>/SKILL.md`；不要假设它们会自动发现 omp 的镜像。
+- 这份注入只覆盖上列已配置的工具和配置路径；新 agent 或自定义 profile 需另行核对其加载入口。
+
+## 技能选择
+
+- 先读当前项目的 `AGENTS.md`；项目专用技能放在该项目的 `.agent/skills/`，由项目说明何时使用。
+- 个人通用技能以本仓库 `skills/` 为唯一内容源。需要时先读对应 `SKILL.md`，按其中步骤执行；不要把项目技能复制进个人记忆层。
+- 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）。其它技能见本仓库 `README.md`。
 - 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
 
 ## 偏好
