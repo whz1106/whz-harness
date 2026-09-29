@@ -13,7 +13,7 @@ agent-memory/
 ├── projects/        项目记忆（每个项目一个文件）
 │   ├── agc64f-llm-deploy.md    64F 大模型多实例部署
 │   ├── four-test-v1.md         独立项目仓库的导航指针
-│   └── zhiyuan-platform.md     智源数字员工平台（AEP/AaaS/k3s 全栈）
+│   └── zhiyuan-enterprise.md     知远企业版（Zhiyuan Enterprise）（AEP/AaaS/k3s 全栈）
 └── notes/inbox.md   捕获区（追加式）
 ```
 
@@ -44,7 +44,7 @@ agent-memory/
 | 个人偏好与工作方式 | `agent-memory/personal.md` | 交付要可验证、回答要短、破坏性操作先确认 |
 | 项目：64F 大模型多实例部署 | `agent-memory/projects/agc64f-llm-deploy.md` | 三个模型三选一，Docker+Kata 混合，nginx :8000 聚合 |
 | 项目：four-test v1 多模态压测 | `agent-memory/projects/four-test-v1.md` | 仅指向独立项目仓库；细节以该仓当前 `AGENTS.md` 为准 |
-| 项目：智源数字员工平台 | `agent-memory/projects/zhiyuan-platform.md` | AEP + 知远企业扩展，k3s 全栈部署（runbook 在 zhiyuan-docs） |
+| 项目：知远企业版（Zhiyuan Enterprise） | `agent-memory/projects/zhiyuan-enterprise.md` | AEP + 知远企业扩展，k3s 全栈部署（runbook 在 zhiyuan-docs） |
 | 环境（机器与硬约束） | `machines/AGENTS.md` | kata/vfio/docker 的禁改项，动手前必读 |
 | 外部资料 | `materials/INDEX.md` | 部署包、脚本、受控原件指针 |
 | 怎么用这套记忆 | skill `harness-memory` | 读写流程与命令 |
