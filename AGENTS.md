@@ -17,6 +17,7 @@
 | --- | --- |
 | 知道这台机器/这个环境的硬约束 | `machines/AGENTS.md` → `machines/RULES.md`（**动手前必读**） |
 | 查已有记忆、写新记忆 | `agent-memory/AGENTS.md` |
+| 动某个已知项目（知远企业版、64F 等） | 先读当前项目 `AGENTS.md`，再读 `agent-memory/projects/<项目>.md`（索引在 `agent-memory/AGENTS.md`） |
 | 拿外部资料（部署包、脚本、项目资料） | `materials/README.md` → `materials/INDEX.md` |
 | 复用个人技能 | 本仓库 `skills/<name>/SKILL.md`；注入层会给出本仓库绝对路径 |
 | 使用项目自选技能 | 项目根目录 `.agent/skills/<name>/SKILL.md`，先读项目 `AGENTS.md` 的选择规则 |
@@ -51,7 +52,7 @@
 
 - 先读当前项目的 `AGENTS.md`；项目专用技能放在该项目的 `.agent/skills/`，由项目说明何时使用。
 - 个人通用技能以本仓库 `skills/` 为唯一内容源。需要时先读对应 `SKILL.md`，按其中步骤执行；不要把项目技能复制进个人记忆层。
-- 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）。其它技能见本仓库 `README.md`。
+- 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）、`antd`（Ant Design，项目内安装 `.agents/skills/antd` 时优先用项目份）、`Deli_AutoResearch`（长任务自治框架）。其它技能见本仓库 `README.md`。
 - 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
 
 ## 偏好

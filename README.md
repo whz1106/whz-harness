@@ -13,6 +13,7 @@ clone 到 Mac 或 Windows 后，运行一次 `scripts/sync.*`，把简短规则�
 | 64F 相关工作 | `machines/AGENTS.md`、`machines/RULES.md` | `machines/agc64f.md`；操作前只读核对当前状态 |
 | 64F 大模型部署 | 上一行机器规则 | `materials/agc64f-llm-deploy/README.md` → `materials/agc64f-llm-deploy/ASSETS.md` → `materials/agc64f-llm-deploy/AI_CONTEXT.md`；本机 `local/assets.local.md`（若存在） |
 | `four-test-v1` 工作 | 该项目仓库当前 `AGENTS.md` | 本仓库只提供 `materials/four-test/README.md` 指针和 64F 通用禁改规则 |
+| 知远企业版（zhiyuanAaaS / Agent-Enterprise-Protocol） | 项目仓各自 `AGENTS.md` + 本仓库 `agent-memory/projects/zhiyuan-enterprise.md` | antd 任务读项目 `.agents/skills/antd/SKILL.md`；部署读 `materials/zhiyuan-docs/README.md` → `zhiyuan-docs/07-deployment/k3s-bringup.md` |
 
 `AGENTS.md` 是 agent 的执行入口；本 `README.md` 是安装、目录分工和人工维护说明。历史机器基线、上次观察和项目规则快照均不能代替操作前的当前核对。
 
