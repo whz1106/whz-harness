@@ -1,28 +1,28 @@
 # machines —— 机器清单与环境硬约束
 
 > 这一层回答：**每台机器是什么、能做什么、绝对不能做什么。**
-> **更新频率最高的层**（拓扑、镜像、坑都会变）；注入为 `machines-memory` 层，所以保持短，细节进 `machines/<机器>.md`。
+> 注入为 `machines-memory` 层，所以保持短。`machines/<机器>.md` 是历史基线；当前状态须在操作前核对。以下路径以 whz-harness 仓库根目录为基准。
 
 ## 铁律（先读这条再动手）
 
 对下面登记的任何机器：
 
-1. **VFIO / PCI / ACS / Kata 配置 / reboot / 全局 pkill —— 未经我明确同意，一律不做。** 完整清单见 `RULES.md`。
+1. **VFIO / PCI / ACS / Kata 配置 / reboot / 全局 pkill —— 未经我明确同意，一律不做。** 完整清单见 `machines/RULES.md`。
 2. 出现 GPU 掉卡类故障信号 → **立即停手**，留现场、收日志、报告，禁止循环重试。
 3. 任何环境修改前先只读记录现场，说明故障点、拟改文件、影响范围、回滚方法，取得授权后再动手。
 4. 覆盖机器上原有脚本/配置前先问，改完先给 diff。
 5. **完整 IP 不写进本层**：只写网段，真值在 `local/` 与 `~/.ssh/config`。
 
-> 这些约束优先级**高于**任何「把任务做完」的诉求。skill `machine-ops-guard` 是这套约束的执行流程。
+> 这些约束优先级**高于**任何「把任务做完」的诉求。`skills/machine-ops-guard/SKILL.md` 是执行流程。
 
 ## 机器索引
 
 | 机器 | 文件 | 一句话 |
 | --- | --- | --- |
-| `agc64f` | `agc64f.md` | 64 × DX8190 单机；Docker + Kata(VFIO) 混合多实例；只有 `dx-smi` |
-| `four-test` / `amd-test` | 待建（暂记在 `agc64f.md` 同节） | 同网段另外两台，接入别名见 `~/.ssh/config` |
+| `agc64f` | `machines/agc64f.md` | 历史基线：64 × DX8190，Docker + Kata(VFIO) 混合；当前状态须只读核对 |
+| `four-test` / `amd-test` | 待建（暂记在 `machines/agc64f.md` 同节） | 同网段另外两台，接入别名见 `~/.ssh/config` |
 
-新增机器：复制 `templates/machine.md` 建 `machines/<代号>.md`，在本表加一行，并把它的禁改项写进 `RULES.md`。
+新增机器：复制 `templates/machine.md` 建 `machines/<代号>.md`，在本表加一行，并把它的禁改项写进 `machines/RULES.md`。
 
 ## 通用已知坑（跨机器）
 
@@ -35,6 +35,6 @@
 
 ## 相关
 
-- 禁改清单全文：`RULES.md`
-- 机器细节：`machines/<代号>.md`（当前：`agc64f.md`）
-- 资料与脚本：`../materials/INDEX.md`
+- 禁改清单全文：`machines/RULES.md`
+- 机器细节：`machines/<代号>.md`（当前：`machines/agc64f.md`）
+- 资料与脚本：`materials/INDEX.md`

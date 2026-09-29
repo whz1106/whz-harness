@@ -8,7 +8,8 @@
 | --- | --- | --- |
 | 真实值 | `agc64f.local.md`：真实地址、ssh 别名、现场接入方式 | `machines/agc64f.md` 里引用 |
 | 受控参考资料 | 客户给的 PDF、截图、脚本、数据索引、临时笔记 | 按文件名被引用，或在本目录 `AGENTS.md` 里列一行 |
-| 大文件的真实路径 | `artifacts.local.md`：部署包 zip、测试数据在哪 | `materials/INDEX.md` 里引用 |
+| 大文件的真实路径 | `assets.local.md`：模型权重、镜像 tar、部署包等的位置与校验记录 | `materials/agc64f-llm-deploy/ASSETS.md` 等资料引用 |
+| 64F 最近一次只读观察 | `agc64f-state.local.md`：核验时间、32+32 卡映射依据、运行时与镜像状态 | `machines/agc64f.md` 引用；模板在 `templates/agc64f-state.local.md` |
 
 **规则：完整 IP 也不写在这里。** 只写网段（`172.18.5.***`），真值留在 `~/.ssh/config` 或你的密码管理器里 —— 这个目录只是"不进 git"，不等于"可以随便写"。
 
@@ -20,6 +21,12 @@
 - 其它 `*.md` → 不自动注入，由 `AGENTS.md` 用相对导入 `@agc64f.local.md` 带进来，或写明路径让 agent 需要时自己读。
 
 所以加完东西记得在 `local/AGENTS.md` 里补一行。
+
+新机器可先把 `templates/local-AGENTS.md` 复制到 `local/AGENTS.md`，再删除不存在的文件项。没有这个入口时，同步脚本会跳过 `local-memory` 层。
+
+大模型资产可从 `templates/local-assets.md` 复制一份到 `local/assets.local.md` 填写。Mac 与 Windows 各保存自己的路径；不要把硬盘路径写死在入库的部署脚本里。
+
+64F 的动态状态可从 `templates/agc64f-state.local.md` 建立观察记录；它是带时间的笔记，每次操作前仍要只读核对现场。
 
 ## 换机器
 

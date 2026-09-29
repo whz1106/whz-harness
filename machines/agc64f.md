@@ -3,6 +3,10 @@
 > 权威上下文：`materials/agc64f-llm-deploy/AI_CONTEXT.md`（567 行，含全部坑与实测数据）。
 > 本文件是**索引 + 硬事实速查**；部署/压测细节以 `materials/agc64f-llm-deploy/AI_CONTEXT.md` 与 `materials/agc64f-llm-deploy/部署与推理操作手册.md` 为准。
 
+> 以下为资料形成时的环境基线，**不代表当前在线状态**。最近一次只读观察可记在本机 `local/agc64f-state.local.md`（模板：`templates/agc64f-state.local.md`），观察记录也不能代替操作前的现场核对。任何 ACS、VFIO 绑卡或 Kata 全局变更须用户明确授权，并由现场负责人确认执行边界。
+
+基线精确核验时间：原始资料未登记；本次没有连接机器核验。
+
 ## 接入
 
 ```bash
@@ -26,7 +30,7 @@ Host agc64f
 
 工作目录：`/data/whz/llm`（本部署）、`/data/whz/four-test-v1`（多模态压测仓库）、`/data/whz/whz-data`（资产根）。
 
-## 硬事实（已核实，不要假设）
+## 历史环境基线（当时已核实，当前须重验）
 
 | 项 | 值 |
 | --- | --- |
@@ -71,7 +75,14 @@ cat /etc/modprobe.d/vhost-vfio.conf                       # options vhost max_me
 command -v containerd-shim-kata-v2
 ```
 
+## 部署前只读核对
+
+1. `dx-smi -L` 确认宿主驱动可见的卡数；它只覆盖 Docker 侧，不代表另 32 张 VFIO 卡不存在。
+2. `ls /dev/vfio` 只表明 VFIO 设备节点存在，**不能据此证明有 32 张可用 GPU**。需将预期 BDF 与当前 driver、IOMMU group、`/dev/vfio/<group>` 逐一对应；映射不一致即停下报告。
+3. 读取 `/proc/cmdline`、`driverctl list-overrides`、Kata 配置校验和及容器状态，与本文件和部署脚本预期核对。此步骤只读，不运行任何 ACS/绑卡/解绑卡脚本。
+4. 检查模型目录、镜像和启动脚本版本。资产实际位置以本机 `local/` 索引为准；未登记或校验不符时不启动。
+
 ## 相关项目
 
 - `agent-memory/projects/agc64f-llm-deploy.md` — 大模型多实例部署（`/data/whz/llm`）
-- `agent-memory/projects/four-test-v1.md` — OCR/YOLO/ASR/TTS/视频 64 卡压测（`/data/whz/four-test-v1`）
+- `materials/four-test/README.md` — `four-test-v1` 独立项目仓库入口；项目细节以该仓当前文件为准

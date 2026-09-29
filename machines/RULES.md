@@ -2,7 +2,7 @@
 
 这些是 `machines/` 下登记机器的硬约束，优先级高于任何「把任务做完」的诉求。违反任一条都可能造成机器不可恢复的损坏。执行流程见 skill `machine-ops-guard`。
 
-1. **禁止** VFIO/PCI bind·unbind、`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、安装或启用自动绑卡服务。未经用户明确授权一律不做。
+1. **禁止** VFIO/PCI bind·unbind、`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、`AcsShutdown.sh`、其它 ACS 开关/拓扑变更、安装或启用自动绑卡服务。未经用户明确授权一律不做；现场负责人的脚本也不能代替授权。
 2. **禁止**修改 Kata 全局配置：`/etc/kata-containers/configuration.toml`、`/opt/kata/share/defaults/kata-containers/**`。
 3. **禁止** `reboot`、`shutdown`、power cycle、PCI remove/rescan、改 GRUB/内核参数/initramfs。
 4. **禁止**全局 `pkill -9 qemu-system*` / `pkill -9 containerd-shim*`；容器与进程清理**只按本轮明确创建的名字**。

@@ -6,7 +6,7 @@
 
 对 `machines/` 里登记的任何机器（目前是 `agc64f`），**未经明确同意一律不做**：
 
-1. VFIO / PCI 相关：`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、任何 PCI driver bind/unbind、安装或启用自动绑卡服务。
+1. VFIO / PCI / ACS 相关：`driverctl set-override`/`unset-override`、`bindVfio.sh`/`unbindVfio.sh`、`AcsShutdown.sh`、任何 PCI driver bind/unbind 或 ACS 开关/拓扑变更、安装或启用自动绑卡服务。
 2. Kata 全局配置：`/etc/kata-containers/configuration.toml`、`/opt/kata/share/defaults/kata-containers/**`。
 3. `reboot`、`shutdown`、power cycle、PCI remove/rescan、改 GRUB / 内核参数 / initramfs。
 4. 全局 `pkill -9 qemu-system*` / `pkill -9 containerd-shim*`；容器与进程清理**只按本轮明确创建的名字**。

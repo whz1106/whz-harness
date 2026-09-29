@@ -23,7 +23,8 @@ description: 新起一个 agent / 新接一个项目或机器时，用 ~/whz-har
 - 第三节「硬约束」是必填项：
   - 若该环境属于 `machines/` 里登记的机器 → 把 `machines/RULES.md` 的禁改项抄进来（vfio/kata/reboot/全局 pkill），并写明"必须经我明确同意"。
   - 任何环境都要写：不写完整 IP / 客户名 / 密钥；真实值放 `local/` 或 `~/.ssh/config`。
-- 第五节「去哪看细节」保留指向 `~/whz-harness/{env,agent-memory,materials,local}` 的表。
+- 第五节「去哪看细节」保留指向本仓库 `machines/`、`agent-memory/`、`materials/`、`local/` 的表；若仓库未克隆到 `~/whz-harness`，改成当前机器的实际路径。
+- 项目有 `.agent/skills/` 时，在「项目技能」表逐项写具体触发场景和 `SKILL.md` 路径；项目没有专用技能时删掉占位表。不同 agent 均按这张表读取技能，不假设 `.agent/` 会被原生扫描。
 
 ### 3. 挂上记忆与资料
 
