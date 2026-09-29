@@ -30,6 +30,8 @@
 | material | 指针 | 本体在哪 | 状态 |
 | --- | --- | --- | --- |
 | `four-test` | `materials/four-test/README.md` | 私有仓 `whz1106/four-test-v1`（当前）、`whz1106/four-test`（旧） | 当前版最后提交 2026-09-21 |
+| `zhiyuan-docs` | `materials/zhiyuan-docs/README.md` | 私有仓 `rongxinzy/zhiyuan-docs`；本机已 clone `D:/rongxin/zhiyuan-docs/` | 最后更新 2026-09-24（k3s-bringup.md） |
+| `antd`（skill） | `skills/antd/SKILL.md` | `npx skills add ant-design/ant-design-cli`（离线元数据，已收进本仓 `skills/antd/`） | 装入 2026-09-29 |
 
 **为什么不做 submodule**：本仓库是公开的，挂一个指向私有仓的 submodule，别人 clone 会直接报错；而且要求"clone 一个仓库就能用"。所以只写指针，用的时候 `gh repo clone`。
 
