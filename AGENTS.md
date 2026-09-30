@@ -34,10 +34,15 @@
 
 | 别名 | 系统 | 家目录 | 本仓库路径 |
 | --- | --- | --- | --- |
-| win-main | Windows 11 Pro x64 / Intel i5-14500 / Windows Terminal | `C:\Users\Administrator` | 推荐 `~/whz-harness` |
+| win-main | Windows 11 Pro x64 / Intel i5-14500 / Windows Terminal | `C:\Users\Administrator` | `D:\rongxin\whz-harness` |
 | mac | macOS | `~/` | 推荐 `~/whz-harness` |
 
-两端推荐克隆到各自家目录下的 `whz-harness`。若放在其它位置，以同步受管块给出的本机绝对路径为准；仓库内文档的相对路径始终以仓库根目录为基准。
+默认克隆到各自家目录下的 `whz-harness`；若放在其它位置，以同步受管块给出的本机绝对路径为准，仓库内文档的相对路径始终以仓库根目录为基准。win-main 于 2026-09-30 移出 C 盘家目录，改放 `D:\rongxin\whz-harness`——与 `zhiyuanAaaS`、`zhiyuan-docs` 同在 `D:\rongxin` 下。该机器上 `scripts/sync.ps1` 的默认 `$Repo`（`$HOME\whz-harness`）已失效，必须显式传 `MEMORY_REPO`：
+
+```powershell
+$env:MEMORY_REPO = 'D:\rongxin\whz-harness'
+powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1 -NoPull
+```
 
 ## 工具链
 
