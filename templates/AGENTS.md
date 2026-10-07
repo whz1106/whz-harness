@@ -37,12 +37,12 @@ description: AGENTS.md 参考模板：新建项目或新接一台机器时，按
 ## 四、约定
 
 - 提交信息：`<Conventional Commits，见 ~/whz-harness/skills/git-pr-workflow>`
-- 测试记录：`testlog/YYYY-MM/...`（见 `~/whz-harness/AGENTS.md`）
+- 测试记录：`<沿用项目现有测试与交付记录路径；没有约定时按任务报告实际命令和结果>`
 - 目录/命名：`<…>`
 
 ### 项目技能
 
-项目专用技能统一放 `.agent/skills/<name>/SKILL.md`。在下表写明触发场景；agent 需要使用时先读对应文件，不依赖某个工具是否会自动扫描 `.agent/`。没有项目技能就删除本小节。
+新项目默认可用 `.agent/skills/<name>/SKILL.md`；已有项目沿用实际 `.agent/skills/`、`.agents/skills/` 或 `.codex/skills/`，不为统一命名搬迁。在下表写明触发场景和实际路径；agent 使用时先读文件，不假定工具会自动发现。没有项目技能就删除本小节。
 
 | 何时使用 | 技能文件 |
 | --- | --- |

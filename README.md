@@ -8,14 +8,18 @@ clone 到 Mac 或 Windows 后，运行一次 `scripts/sync.*`，把简短规则�
 
 | 当前任务 | 先读 | 再按需读 |
 | --- | --- | --- |
-| 普通项目工作 | 当前项目 `AGENTS.md`、本仓库 `AGENTS.md` | 项目 `.agent/skills/<name>/SKILL.md` 或本仓库 `skills/<name>/SKILL.md` |
+| 普通项目工作 | 当前项目 `AGENTS.md` / `CLAUDE.md`、本仓库 `AGENTS.md` | 按项目实际目录读取开发技能，或本仓库 `skills/<name>/SKILL.md` |
 | Git 提交或 PR | 本仓库 `AGENTS.md` 的提交习惯 | `skills/git-pr-workflow/SKILL.md` |
 | 64F 相关工作 | `machines/AGENTS.md`、`machines/RULES.md` | `machines/agc64f.md`；操作前只读核对当前状态 |
 | 64F 大模型部署 | 上一行机器规则 | `materials/agc64f-llm-deploy/README.md` → `materials/agc64f-llm-deploy/ASSETS.md` → `materials/agc64f-llm-deploy/AI_CONTEXT.md`；本机 `local/assets.local.md`（若存在） |
 | `four-test-v1` 工作 | 该项目仓库当前 `AGENTS.md` | 本仓库只提供 `materials/four-test/README.md` 指针和 64F 通用禁改规则 |
 | 知远企业版（zhiyuanAaaS / Agent-Enterprise-Protocol） | 项目仓各自 `AGENTS.md` + 本仓库 `agent-memory/projects/zhiyuan-enterprise.md` | antd 任务读项目 `.agents/skills/antd/SKILL.md`；部署读 `materials/zhiyuan-docs/README.md` → `zhiyuan-docs/07-deployment/k3s-bringup.md` |
+| 知远桌面应用（`D:/rongxin/RongxinAI`） | 项目 `AGENTS.md` / `CLAUDE.md` + `agent-memory/projects/zhiyuan-app.md` | UI 读 `DESIGN.md` 与 `.codex/skills/frontend-ui-change-strategy/SKILL.md`；复用 shadcn/ui + ai-elements |
+| 晓软定制桌面应用（`D:/rongxin/xiaoruan-ai-agent`） | 项目 `AGENTS.md` / `CLAUDE.md` + `agent-memory/projects/xiaoruan-app.md` | 定制读 `CUSTOMIZATION.md`；UI 读 `DESIGN.md` 与 `.codex/skills/frontend-ui-change-strategy/SKILL.md` |
 
 `AGENTS.md` 是 agent 的执行入口；本 `README.md` 是安装、目录分工和人工维护说明。历史机器基线、上次观察和项目规则快照均不能代替操作前的当前核对。
+
+开发技能沿用项目实际入口，不为统一命名搬迁。2026-10-07 两个桌面项目均有 `.codex/skills/frontend-ui-change-strategy/` 和 `.codex/skills/rongxinai-ui-adapter/`，CLAUDE.md 使用普通文件的 `@AGENTS.md` 导入；它们的 `SKILLs/` 是产品运行时内置技能。全局 UI 技能按当前环境核对，企业版的 Ant Design 要求不自动套到桌面项目。
 
 ## 结构
 
@@ -52,7 +56,7 @@ local/             本机投放区（gitignore，只有 README.md 入库；有 A
 | 目录 | 放什么 | 不放什么 |
 | --- | --- | --- |
 | `skills/` | 跨项目复用的个人技能，每个技能一个 `SKILL.md` | 某个项目独有的流程 |
-| 项目仓 `.agent/skills/` | 该项目自选技能；项目 `AGENTS.md` 写触发条件 | 个人通用技能的复制品 |
+| 项目仓 `.agent/skills/`、`.agents/skills/`、`.codex/skills/` | 沿用项目实际开发技能目录；项目 `AGENTS.md` 写触发条件 | 个人通用技能的复制品 |
 | `agent-memory/` | 个人习惯、项目结论和短索引 | 可以从代码或日志直接重建的大段细节 |
 | `machines/` | 带来源的历史基线、核验入口和危险操作规则 | 凭旧记录猜测的当前在线状态 |
 | `materials/` | 可入库的部署文本、脚本、配置和大文件指针 | 权重、镜像 tar、受控原件 |
@@ -86,7 +90,7 @@ my-project/
 
 **只有各层的 `AGENTS.md` / `RULES.md` 被注入**；`agent-memory/personal.md`、`agent-memory/projects/`、`machines/<机器>.md`、`materials/` 由索引指引按需读取，避免每轮装入整份手册。
 
-项目专用技能放项目仓库的 `.agent/skills/<name>/SKILL.md`，并在该项目 `AGENTS.md` 写清触发场景。已读取项目规则的 agent 可以按路径打开技能；原生自动发现仍取决于具体工具。模板见 `templates/AGENTS.md`。
+新项目默认技能目录见上面的最小结构；已有项目沿用真实路径，并在 `AGENTS.md` 写清触发场景。已读取项目规则的 agent 可以按路径打开技能；原生自动发现仍取决于具体工具。模板见 `templates/AGENTS.md`。
 
 ## Mac / Windows 首次安装
 
@@ -134,6 +138,8 @@ bash scripts/capture.sh "某机器的坑" --tag agc64f
 bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意跳过 local/）
 ```
 
+`capture.sh` / `capture.ps1` 会自动提交，默认还会推送；`--no-push` / `-NoPush` 仅关闭推送，不关闭提交。只做本地记忆编辑时直接追加 inbox 并整理，提交/推送按实际授权执行。win-main 调用脚本前显式设置 `MEMORY_REPO`。
+
 改过注入层（`AGENTS.md` / `RULES.md` / `agent-memory/*` / `machines/*`）后必须跑一次 `sync`。
 
 ## skills 一览
@@ -144,6 +150,7 @@ bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意
 | `machine-ops-guard` | 动远程机器前的闸门：禁改项、必须经同意、故障信号停手 |
 | `materials-intake` | 外部资料收编：分流、脱敏、登记、写标准 README |
 | `harness-memory` | 记忆读写流程与命令 |
+| `antd` | Ant Design 任务的本地 API/token/demo 查询；优先项目已安装版本 |
 | `git-pr-workflow` | 提交与 PR/MR 规范（`references/commit-pr-format.md`） |
 | `modelscope-api` | ModelScope OpenAPI、下载、发布、打包 |
 | `daily-work-summary` | 日常工作总结 |

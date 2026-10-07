@@ -13,7 +13,9 @@ agent-memory/
 ├── projects/        项目记忆（每个项目一个文件）
 │   ├── agc64f-llm-deploy.md    64F 大模型多实例部署
 │   ├── four-test-v1.md         独立项目仓库的导航指针
-│   └── zhiyuan-enterprise.md     知远企业版（Zhiyuan Enterprise）（AEP/AaaS/k3s 全栈）
+│   ├── zhiyuan-enterprise.md     知远企业版（Zhiyuan Enterprise）（AEP/AaaS/k3s 全栈）
+│   ├── zhiyuan-app.md            知远桌面应用（RongxinAI）
+│   └── xiaoruan-app.md           晓软桌面定制分支（xiaoruan-ai-agent）
 └── notes/inbox.md   捕获区（追加式）
 ```
 
@@ -45,6 +47,8 @@ agent-memory/
 | 项目：64F 大模型多实例部署 | `agent-memory/projects/agc64f-llm-deploy.md` | 三个模型三选一，Docker+Kata 混合，nginx :8000 聚合 |
 | 项目：four-test v1 多模态压测 | `agent-memory/projects/four-test-v1.md` | 仅指向独立项目仓库；细节以该仓当前 `AGENTS.md` 为准 |
 | 项目：知远企业版（Zhiyuan Enterprise） | `agent-memory/projects/zhiyuan-enterprise.md` | AEP + 知远企业扩展，k3s 全栈部署（runbook 在 zhiyuan-docs） |
+| 项目：知远桌面应用（RongxinAI） | `agent-memory/projects/zhiyuan-app.md` | `D:/rongxin/RongxinAI`；先读项目 AGENTS.md / CLAUDE.md；UI 按 DESIGN.md 与项目开发技能（2026-10-07） |
+| 项目：晓软桌面定制分支 | `agent-memory/projects/xiaoruan-app.md` | `D:/rongxin/xiaoruan-ai-agent`；先读项目 AGENTS.md / CLAUDE.md；定制边界见 CUSTOMIZATION.md（2026-10-07） |
 | 环境（机器与硬约束） | `machines/AGENTS.md` | kata/vfio/docker 的禁改项，动手前必读 |
 | 外部资料 | `materials/INDEX.md` | 部署包、脚本、受控原件指针 |
 | 怎么用这套记忆 | skill `harness-memory` | 读写流程与命令 |

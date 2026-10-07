@@ -39,6 +39,8 @@ ls ~/whz-harness/agent-memory/projects ~/whz-harness/materials
 
 ## 写入
 
+“记录/更新记忆”授权本地编辑和必要同步，不自动授权提交或推送。下方 capture 脚本会自动提交（默认还推送；`--no-push` / `-NoPush` 仍会提交），只在这些操作已获授权时使用；否则直接追加 inbox 并整理。win-main 当前路径为 `D:/rongxin/whz-harness`，使用脚本前设置 `MEMORY_REPO`，不要依赖失效的家目录默认值。
+
 ```bash
 # 零散事实（只提交 inbox，一次一条）
 bash ~/whz-harness/scripts/capture.sh "事实"                    # → agent-memory/notes/inbox.md
@@ -47,13 +49,14 @@ bash ~/whz-harness/scripts/capture.sh "某机器的坑" --tag agc64f      # 加�
 # 正式文件：直接编辑后提交
 git -C ~/whz-harness pull --ff-only
 # 编辑 agent-memory/... 或 machines/...
-git -C ~/whz-harness add -A
+git -C ~/whz-harness status --short
+git -C ~/whz-harness add -- agent-memory/projects/<project>.md agent-memory/AGENTS.md
 git -C ~/whz-harness commit -m "memory: <摘要>"     # 环境用 env:，资料用 materials:
 git -C ~/whz-harness push
 bash ~/whz-harness/scripts/sync.sh                  # 改过注入层后必须跑（Windows: sync.ps1）
 ```
 
-**提升规则**：inbox 里的条目稳定后整理进正式文件，然后删掉那行。写进 `personal.md` 前自问：*这条会不会影响我 3 个以上项目的决策？*
+仅在已授权提交/推送时运行上述 Git 写操作，显式暂存本任务文件，不带入其它会话的改动。**提升规则**：inbox 里的条目稳定后整理进正式文件，然后删掉那行。写进 `personal.md` 前自问：*这条会不会影响我 3 个以上项目的决策？*
 
 ## 硬约束
 
