@@ -1,52 +1,45 @@
-# 个人记忆长文
+# 本地 k3s 部署通用坑（WSL2 宿主，2026-10-07 知远企业版实测）
 
-> 根 `AGENTS.md` 是注入的精简版；这里是细节与历史。**不注入**，按需读。
+> 适用于任何 WSL2 + k3s 部署，不止知远。来源：zhiyuan-enterprise 项目部署实录。
 
-## 工作方式
+## 离线导入优先原则
 
-- **先证据后结论**：改完跑真实路径，把输出贴出来。不接受「应该能行」「理论上」。
-- **一次一件事**：不要把「顺手」的额外改动混进当前任务；要顺手就先问。
-- **复现优先**：报 bug 先复现，修完再确认复现路径不再触发。
-- **交付要能验收**：说清改了什么、怎么验、还有什么没做。
-- **破坏性操作先确认**：`push --force`、删数据、改全局配置、动别人的目录。
+k3s containerd 与 docker 镜像存储完全隔离。缺镜像时**首选离线导入**而不是修在线拉取（快 10 倍）：
 
-## 交流偏好
+```bash
+# Windows 侧
+docker pull <image> && docker save <image> -o D:/tmp/x.tar
+# WSL 侧
+k3s ctr images import /mnt/d/x.tar        # OCI index 报错时：先 tag 纯 amd64 再 save；或加 --platform linux/amd64
+k3s crictl images | grep <name>           # 验证
+```
 
-- 中文交流；代码、标识符、命令、日志用英文原样。
-- 回答短、可执行、结论先行；不要营销式措辞和过程叙述。
-- 不确定就说不确定，并给出判断依据；不要为了显得可靠而含糊。
+多镜像打 tag 复用：`k3s ctr images tag <sha256或旧名> <新名:tag>`（docreader→weknora-docreader 等改名场景）。
 
-## 工具链细节
+## WSL2 特有四坑
 
-### omp（Oh My Pi）
+1. **VM 空闲回收杀 k3s**：症状 pod 集体重拉 + flannel subnet.env 报错 + k3s 每小时重启多次。解法 `~/.wslconfig`：`[wsl2] vmIdleTimeout=-1`，然后 `wsl --shutdown`。
+2. **DNS 双面性**：shell 里 `getent` 解析成功 ≠ containerd/kubelet 解析成功（后者偶发 timeout）。排查时分别测，别只测 shell。
+3. **kubectl exec/logs 偶发 proxyconnect 502**：API server 往 10250 拨号被宿主代理拦。临时：`NO_PROXY=$NO_PROXY,<node-ip>`；或重启 k3s。
+4. **时钟跳跃**：`Time jumped backwards` 出现说明 VM 睡眠恢复过——伴随随机重启，与坑 1 同源。
 
-- agent 目录 `~/.omp/agent`；`PI_CODING_AGENT_DIR` 可重定位；`--profile <name>` 用 `~/.omp/profiles/<name>/agent`。
-- 记忆后端默认 `off`。`local` 后端按 cwd 绝对路径给记忆分目录（Windows/macOS 编出的目录名不同），**不能跨机器共享** → 跨机器共享用本仓库。
-- `local` 后端只处理「≥12h 空闲、≤30 天、且被持久化」的会话；子代理不跑记忆管线。
-- `/memory view` 在无可注入载荷时提示 `Memory payload is empty …` —— 那是提示不是报错。
-- `--config <file>` 可以叠一层临时配置做实验，不动全局设置（试记忆后端时用过）。
+## 代理环境三原则
 
-### 其它 agent
+1. k3s 的 systemd env 文件（`/etc/systemd/system/k3s.service.env`）会被 containerd 继承——**NO_PROXY 里通配（如 `172.18.*`）对 IP 直连拉取不生效，要写具体 IP**。
+2. 改完 `systemctl daemon-reload && systemctl restart k3s`，再 `cat /proc/$(pgrep -f "k3s server")/environ | tr '\0' '\n' | grep -i proxy` 验证进程实际继承值。
+3. Artifactory 内网仓 + docker：网页密码（如 admin@9000）可能只够 UI 登录，docker token 端点会 BAD_CREDENTIAL——手册口径是 `~/.jfrog/jfrog-cli.conf.v6` 的 password 字段；实际以组长发放的可用凭证为准（本例 hzwang991106/Admin@9000 可用但仓内容为空，镜像以手动下载+离线导入兜底）。
 
-- Claude Code：用户级 `~/.claude/CLAUDE.md`；支持 `@path` 导入。
-- Codex CLI：用户级 `~/.codex/AGENTS.md`（不支持导入，所以本仓库给它注入合并全文）。
-- Gemini CLI：用户级 `~/.gemini/GEMINI.md`。
-- Copilot / VS Code：`~/.copilot/copilot-instructions.md`。
+## Artifactory 排障速判
 
-### git / gh
+| 现象 | 含义 |
+|---|---|
+| UI 目录存在但 storage API `files: []` | **目录是空的**，镜像没推上来（不是权限） |
+| `/v2/` token 端点 401 BAD_CREDENTIAL | 凭证错或该账号无 docker 权限 |
+| `/v2/<img>/manifests/<tag>` 403 | 账号无该仓 pull 权限 |
+| 502 Bad Gateway | 多为客户端代理拦了内网请求，NO_PROXY 或绕代理 |
 
-- `gh` 已登录 `whz1106`（scope：repo、workflow、gist、read:org）。
-- 全局有 `pull.rebase = true` → 脚本里一律显式 `-c pull.rebase=false pull --ff-only`，否则自动化 pull 会撞 rebase。
-- git identity：`whz <hzwang991106@gmail.com>`。
+## OCI/registry 格式坑
 
-## 踩过的坑（跨项目）
-
-| 坑 | 结论 |
-| --- | --- |
-| 批量文本替换叠 `sed` | 行尾反斜杠（shell 续行符）被误伤成 `$`，一次损坏 12 个文件 297 行。改完**必须与原文件 diff**；能用单条 `sed` 就不要叠 |
-| PowerShell 5.1 读 `.ps1` | 文件必须是 **UTF-8 with BOM**，否则按 GBK 解码，中文注释把脚本解析坏 |
-| PS 5.1 里原生命令重定向 stderr | `2>&1` 会把 stderr 变成 ErrorRecord，配合 `$ErrorActionPreference='Stop'` 直接终止脚本。原生命令不要重定向，用 `$LASTEXITCODE` 判断 |
-| Windows 上 `$HOME` | Git Bash/MSYS 常把它留空或指到别处 → 脚本先回退 `USERPROFILE`，都不可用就报错退出，不要往 `/.omp` 写 |
-| Git Bash 里的 `bash -c` | 那是 WSL 的 Linux bash，文件系统视图不同（`/c/...` 不存在，要用 `/mnt/c/...`） |
-| 内网 GitLab snippet 抓取 | 本机有 `http_proxy`，内网地址要 `curl --noproxy '*'` |
-| omp `local` 记忆后端 | 跑一次会真的调用模型做抽取/合并，并往 `~/.omp/agent/memories/` 落盘；试完记得清 |
+- Docker 29 拉的是多平台 OCI index，Artifactory 拒收——转推内网仓先拍平（`flatten-push.py`）。
+- `k3s ctr images import` 对目录布局报错时，先打成单流 tar（`cd dir && tar cf x.tar .`）再导。
+- 手动下载镜像三件套（manifest.json + config + layers）拼 docker-save 格式 tar 可行：manifest 要改成**数组**格式 + RepoTags，config/layer 放根目录，逐文件 sha256 校验后导入。
