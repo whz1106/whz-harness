@@ -145,6 +145,8 @@ bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意
 | `materials-intake` | 外部资料收编：分流、脱敏、登记、写标准 README |
 | `harness-memory` | 记忆读写流程与命令 |
 | `git-pr-workflow` | 提交与 PR/MR 规范（`references/commit-pr-format.md`） |
+| `clarify-before-coding` | 澄清再动手：对齐意图/根因/解法后再改；小 PR；确认后可派 subagent |
+| `adversarial-code-review` | 对抗式审查：本 PR 问题 + 合并后新风险；只审不擅自改 |
 | `modelscope-api` | ModelScope OpenAPI、下载、发布、打包 |
 | `daily-work-summary` | 日常工作总结 |
 | `Deli_AutoResearch` | 长任务自治框架（状态文件、卡死检测、心跳看护） |
