@@ -57,7 +57,7 @@ powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1
 
 - 先读当前项目的 `AGENTS.md` / `CLAUDE.md`；技能以项目声明和实际目录为准，不为统一目录名搬迁既有技能。知远、晓软桌面版在 `.codex/skills/` 中分别提供 `frontend-ui-change-strategy/SKILL.md` 和 `rongxinai-ui-adapter/SKILL.md`，UI 以各自 `DESIGN.md`、shadcn/ui 与 ai-elements 为准；企业版涉及 Ant Design 时仍读 `.agents/skills/antd/SKILL.md`（2026-10-07；详见项目记忆索引）。
 - 个人通用技能以本仓库 `skills/` 为唯一内容源。需要时先读对应 `SKILL.md`，按其中步骤执行；不要把项目技能复制进个人记忆层。
-- 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）、`antd`（Ant Design，项目内安装 `.agents/skills/antd` 时优先用项目份）、`Deli_AutoResearch`（长任务自治框架）。其它技能见本仓库 `README.md`。
+- 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）、`clarify-before-coding`（澄清再动手）、`adversarial-code-review`（对抗式审查）、`antd`（Ant Design，项目内安装 `.agents/skills/antd` 时优先用项目份）、`Deli_AutoResearch`（长任务自治框架）。其它技能见本仓库 `README.md`。
 - 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
 
 ## 偏好
