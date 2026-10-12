@@ -1,14 +1,14 @@
 ﻿<#
 把记忆仓库的各个「层」注入到各 agent 的用户级配置。
 
-单一仓库 $HOME\whz-harness，内含四层（每层一个 marker block）：
+单一仓库（默认 = 本脚本所在目录的父目录，即脚本所在的那个仓库），内含四层（每层一个 marker block）：
   personal-memory  仓库根           规则 + 个人记忆：偏好、工具链、编码/提交习惯、通用坑
   agent-memory     agent-memory\    记忆系统：索引、项目记忆、捕获区
   machines-memory       machines\             业务环境信息与硬约束（kata/vfio/docker），高频更新
   local-memory     local\           本地投放区（gitignore）：真实地址、受控资料，clone 后自己放
 
-用法: powershell -ExecutionPolicy Bypass -File $HOME\whz-harness\scripts\sync.ps1 [-NoPull]
-环境变量: MEMORY_REPO（默认 ~\whz-harness）、MEMORY_LAYERS（默认见下）
+用法: powershell -ExecutionPolicy Bypass -File <仓库>\scripts\sync.ps1 [-NoPull]
+环境变量: MEMORY_REPO（默认 = 脚本所在仓库根；仓库被复制到别处时用显式指定）、MEMORY_LAYERS（默认见下）
 #>
 #Requires -Version 5.1
 [CmdletBinding()]
@@ -22,7 +22,7 @@ $HomeDir = $env:USERPROFILE
 
 function Write-Log([string]$Message) { Write-Host "[sync] $Message" }
 
-$Repo = if ($env:MEMORY_REPO) { $env:MEMORY_REPO } else { Join-Path $HomeDir 'whz-harness' }
+$Repo = if ($env:MEMORY_REPO) { $env:MEMORY_REPO } else { Split-Path -Parent $ScriptDir }
 $Layers = if ($env:MEMORY_LAYERS) { $env:MEMORY_LAYERS } else { 'personal-memory: agent-memory:agent-memory machines-memory:machines local-memory:local' }
 $SkillDir = Join-Path $HomeDir '.omp\agent\skills'
 $Mirrored = @()

@@ -52,7 +52,8 @@ if [ -z "${HOME:-}" ] || [ ! -d "$HOME" ]; then
 	exit 1
 fi
 
-REPO="${MEMORY_REPO:-$HOME/whz-harness}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="${MEMORY_REPO:-$(dirname "$SCRIPT_DIR")}"
 [ -d "$REPO/.git" ] || {
 	printf 'capture: %s 不是 git 仓库\n' "$REPO" >&2
 	exit 1
