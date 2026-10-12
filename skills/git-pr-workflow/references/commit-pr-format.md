@@ -1,6 +1,8 @@
 ## Commit Message Patterns
 
-Prefer `类型: 中文摘要`:
+目标仓库当前 AGENTS.md 优先。知远、晓软桌面仓要求全英文 Conventional Commits，例如 `fix(cowork): preserve draft when switching sessions`；harness 记忆沿用 `memory:` / `env:` / `materials:` / `capture:`。下方中文模板仅用于允许中文的仓库，不能覆盖项目语言规则。
+
+When Chinese is permitted, prefer `类型: 中文摘要`:
 
 - `feat: 新增批量导出功能`
 - `fix: 修复支付回调重复入账问题`
@@ -49,7 +51,7 @@ Prefer a short Chinese summary:
 ## 备注
 - 是否需要 cherry-pick：是/否
 - 目标分支：...
-- 是否已 rebase 目标远端分支：是/否
+- 与目标远端分支的差异及更新方式：...
 - 回滚方式：...
 ```
 
@@ -61,7 +63,7 @@ Prefer a short Chinese summary:
 - 目标分支：...
 - 是否已检查工作区状态：是/否
 - 是否仅暂存目标文件：是/否
-- 是否已 rebase 目标远端分支：是/否
+- 是否已核对目标远端差异并保留已推送历史：是/否
 - 是否已完成验证：是/否
 
 ## 未完成项 / 风险

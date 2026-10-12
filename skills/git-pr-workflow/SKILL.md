@@ -1,6 +1,6 @@
 ---
 name: git-pr-workflow
-description: Use when the user asks to prepare commits, split or review staged changes, write commit messages, draft PR/MR titles or descriptions, inspect CI failures, manage feature or bugfix branches, rebase onto the target remote branch, or cherry-pick fixes onto release branches. Apply this skill for Git workflows that must preserve local changes, use Chinese commit/PR content, follow feat/fix branch naming, and handle release backports safely.
+description: Prepare commits and PR/MR content, inspect CI failures, manage branches, and backport fixes while preserving local changes and published history. Follow the target repository's language, branch, and validation rules.
 ---
 
 # Git PR Workflow
@@ -9,7 +9,7 @@ description: Use when the user asks to prepare commits, split or review staged c
 
 Use this skill to run a safe Git workflow for feature delivery, bugfix delivery, release backports, and CI triage.
 
-Prefer narrow, explicit operations over broad staging or history edits. Preserve local work, use Chinese for commit and PR content, and stop before any destructive action unless the user clearly approves it.
+Prefer narrow, explicit operations over broad staging or history edits. Read the target repository's current AGENTS.md first. Its language and branch rules take precedence over this skill's defaults; ZhiYuan and Xiaoruan desktop repositories require English Conventional Commits. Preserve local work and never rewrite published history.
 
 ## Typical Requests
 
@@ -34,9 +34,10 @@ When the request is ambiguous, first identify:
 Always enforce these rules:
 
 - Run `git status --short` before branch switch, rebase, cherry-pick, commit, reset, or clean.
-- Rebase onto the corresponding remote target branch before PR or MR submission.
+- Inspect divergence from the actual target branch before PR or MR submission. Update a published branch with an ordinary merge commit when needed; rebase only unpublished commits when repository rules permit it.
 - Use `feat/<name>` for new features and `fix/<name>` for bugfixes unless the repository already defines a stricter convention.
-- Write commit messages, PR titles, and PR descriptions in Chinese.
+- Follow the target repository's commit and PR language rules; use Chinese only when no stricter rule exists.
+- Never use force push, including `--force-with-lease`, or bypass verification hooks.
 - Preserve staged, unstaged, and untracked user changes unless the user explicitly approves a destructive action.
 - When CI failure blocks merge or release and is tied to logic, provide a concrete cause and a concrete fix plan.
 
@@ -63,7 +64,7 @@ If the working tree is not clean:
    - explicitly approve restoring selected files if they really want to discard changes
 5. Stop before any destructive action until the user decides.
 
-Do not use `git add .` by default. Stage only the intended files, preferably with explicit paths or `git add -p`.
+Do not use `git add .` or `git add -A`. Stage only the intended files with explicit paths or `git add -p`. A dirty worktree does not block read-only review or committing already authorized, isolated changes; stop only when the next operation risks unrelated work.
 
 ## Branch Naming
 
@@ -77,9 +78,9 @@ Keep names short, specific, and searchable. Use English branch slugs unless the 
 
 ## Commit And PR Language Rules
 
-Write commit messages, PR titles, and PR descriptions in Chinese.
+Read the target repository's language requirements. For ZhiYuan and Xiaoruan desktop commits, use English type/scope/subject/body/footer, a lowercase imperative subject of at most 72 characters, and no trailing period. For harness memories, retain its `memory:` / `env:` / `materials:` / `capture:` conventions.
 
-Prefer Conventional Commit type prefixes in English, with Chinese subject text:
+When the repository permits Chinese, use Conventional Commit type prefixes in English with Chinese subject text:
 
 - `feat: 新增用户导出能力`
 - `fix: 修复登录超时后无法自动刷新`
@@ -87,26 +88,22 @@ Prefer Conventional Commit type prefixes in English, with Chinese subject text:
 - `test: 补充订单重试场景测试`
 - `docs: 更新发布说明`
 
-Keep the first line focused on user-visible intent or code intent. Add a Chinese body only when it clarifies scope, risk, migration, or cherry-pick value.
+Keep the first line focused on user-visible intent or code intent. Add a body in the required language only when it clarifies scope, risk, migration, or cherry-pick value.
 
 For reusable formatting examples, read [references/commit-pr-format.md](references/commit-pr-format.md).
 
-## Rebase Rule
+## Published History Rule
 
-Before opening a PR or MR, rebase onto the corresponding remote target branch, not only `origin/dev`.
+Before opening a PR or MR, inspect the corresponding remote target branch, not an assumed `origin/dev`. Read the upstream and ahead/behind state and determine which commits are already published. Fetch remote refs when authorized by the Git task.
 
-Examples:
-
-- feature or ordinary bugfix targeting `dev`: `git rebase origin/dev`
-- release fix targeting `release/1.0`: `git rebase origin/release/1.0`
-
-After a rebase, if the branch was already pushed before history was rewritten, push with:
+For a published feature or release branch that needs the target branch's changes, use an ordinary merge after confirming the working tree can accommodate it:
 
 ```bash
-git push --force-with-lease origin <branch>
+git merge origin/<target-branch>
+git push origin <branch>
 ```
 
-If it is the first push and no history rewrite happened, ordinary push is sufficient.
+Rebase is optional only for unpublished commits and only when repository rules permit it. A rejected ordinary push requires inspecting remote divergence; never retry with force. Resolve conflicts only within the task's file ownership, otherwise stop and report.
 
 ## Feature Development Workflow
 
@@ -121,9 +118,9 @@ During development:
 
 1. Inspect `git status --short`.
 2. Stage only intended changes.
-3. Write a Chinese commit message.
-4. Rebase onto `origin/dev` before PR or review push.
-5. If the branch was already pushed before the rebase, use `--force-with-lease`.
+3. Write a commit message in the repository's required language.
+4. Inspect divergence from the actual target branch and apply the published-history rule.
+5. Push ordinarily when publishing is authorized.
 
 ## Bugfix Workflow
 
@@ -134,7 +131,7 @@ git fetch origin
 git checkout -b fix/<name> origin/dev
 ```
 
-Then follow the same rules as feature development: precise staging, Chinese commit message, rebase onto `origin/dev` before PR, and safe push behavior after rebase.
+Then follow the same rules as feature development: precise staging, repository-specific commit language, target-branch inspection, and ordinary push without rewriting published history.
 
 ## Release Backport Workflow
 
@@ -145,7 +142,7 @@ When the user needs to backport a bugfix from `dev` to a release branch:
 3. Create a release fix branch from the target release branch.
 4. Cherry-pick only the required commit or commit set.
 5. Resolve conflicts carefully and continue.
-6. Rebase onto the target release branch if needed before PR.
+6. Inspect divergence from the target release branch; merge new target changes when needed without rewriting published commits.
 7. Push the release fix branch.
 
 Reference sequence:
@@ -184,9 +181,9 @@ Before drafting PR content:
 2. Summarize only the actual change in scope.
 3. Call out risk, verification, and whether a release cherry-pick is required.
 4. State the exact target branch.
-5. State whether the branch has already been rebased onto the target remote branch.
+5. State the target-branch divergence and any merge or unpublished rebase performed.
 
-PR title and description must be Chinese. Keep them concrete and include:
+Use the repository's PR language requirements. Keep titles and descriptions concrete and include:
 
 - What changed
 - Why it changed
@@ -204,9 +201,9 @@ Before commit, PR, or MR submission, verify:
 - `git status --short` has been checked
 - only intended files are staged
 - no unrelated debug code, temporary files, or accidental formatting noise is included
-- commit message is Chinese and matches the actual scope
+- commit message follows repository language and formatting rules and matches the actual scope
 - target branch is confirmed
-- local branch has been rebased onto the target remote branch
+- target-branch divergence has been checked and published history is preserved
 - required tests or checks have been run, or the lack of verification is explicitly stated
 - if the change may need release backport, the commit is small enough to cherry-pick cleanly
 
@@ -256,7 +253,7 @@ Be explicit when reporting Git state:
 - Current branch
 - Target branch
 - Whether the working tree is dirty
-- Whether a rebase or cherry-pick rewrote history
-- Whether the next push requires `--force-with-lease`
+- Whether an unpublished rebase or a cherry-pick was performed
+- Whether an ordinary push is possible or remote divergence still needs resolution
 
 If a command could discard or overwrite user work, stop and get approval first.

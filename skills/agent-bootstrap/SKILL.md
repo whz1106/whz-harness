@@ -24,7 +24,8 @@ description: 新起一个 agent / 新接一个项目或机器时，用 ~/whz-har
   - 若该环境属于 `machines/` 里登记的机器 → 把 `machines/RULES.md` 的禁改项抄进来（vfio/kata/reboot/全局 pkill），并写明"必须经我明确同意"。
   - 任何环境都要写：不写完整 IP / 客户名 / 密钥；真实值放 `local/` 或 `~/.ssh/config`。
 - 第五节「去哪看细节」保留指向本仓库 `machines/`、`agent-memory/`、`materials/`、`local/` 的表；若仓库未克隆到 `~/whz-harness`，改成当前机器的实际路径。
-- 项目有 `.agent/skills/` 时，在「项目技能」表逐项写具体触发场景和 `SKILL.md` 路径；项目没有专用技能时删掉占位表。不同 agent 均按这张表读取技能，不假设 `.agent/` 会被原生扫描。
+- 核对项目实际 `.agent/skills/`、`.agents/skills/` 或 `.codex/skills/`，在「项目技能」表写触发场景和真实路径，不搬迁既有技能；没有专用技能时删掉占位表。不假设目录会被工具原生扫描。
+- 检查 CLAUDE.md 的实际文件类型：Windows 在 `core.symlinks=false` 时可能把 Git 软链接检出为只含目标文件名的普通文件。此时显式读取目标 AGENTS.md，不把占位文本当作规则已加载；修复链接或改 Git 配置须单独明确操作范围。
 
 ### 3. 挂上记忆与资料
 

@@ -6,7 +6,7 @@
 
 ## 每次开始任务
 
-1. 先读当前项目的 `AGENTS.md`（若存在），按它的触发条件读取项目 `.agent/skills/<name>/SKILL.md`。项目当前文件是项目规则的来源。
+1. 先读当前项目的 `AGENTS.md`（若存在），再检查 `CLAUDE.md`（若存在；导入或指向 AGENTS.md 时沿用同一来源）。Windows 软链接可能检出为仅含目标文件名的普通文件，须显式读目标，不把占位文本当作规则已加载。按项目触发条件读取实际开发技能入口（如 `.agent/skills/`、`.agents/skills/` 或 `.codex/skills/`）。项目当前文件是项目规则的来源。
 2. 本文件提供个人偏好和导航。只按任务需要继续读对应层，不要每次加载全部机器手册、项目记忆和部署包。
 3. 涉及 `agc64f` 或其它登记机器时，**先读** `machines/AGENTS.md`、`machines/RULES.md`、`machines/<机器>.md`，再做只读现场核对。历史基线或 `local/` 的上次观察都不代表当前状态；ACS/VFIO/PCI/Kata 全局变更须用户明确授权。
 4. 涉及大模型部署时，再读 `materials/agc64f-llm-deploy/README.md`、`materials/agc64f-llm-deploy/ASSETS.md`，以及本机 `local/assets.local.md`（若存在）。权重和镜像在个人硬盘，不在 Git。
@@ -17,10 +17,10 @@
 | --- | --- |
 | 知道这台机器/这个环境的硬约束 | `machines/AGENTS.md` → `machines/RULES.md`（**动手前必读**） |
 | 查已有记忆、写新记忆 | `agent-memory/AGENTS.md` |
-| 动某个已知项目（知远企业版、64F 等） | 先读当前项目 `AGENTS.md`，再读 `agent-memory/projects/<项目>.md`（索引在 `agent-memory/AGENTS.md`） |
+| 动某个已知项目（知远企业版、知远桌面版、晓软、64F 等） | 先读当前项目 `AGENTS.md` / `CLAUDE.md`，再读 `agent-memory/projects/<项目>.md`（索引在 `agent-memory/AGENTS.md`） |
 | 拿外部资料（部署包、脚本、项目资料） | `materials/README.md` → `materials/INDEX.md` |
 | 复用个人技能 | 本仓库 `skills/<name>/SKILL.md`；注入层会给出本仓库绝对路径 |
-| 使用项目自选技能 | 项目根目录 `.agent/skills/<name>/SKILL.md`，先读项目 `AGENTS.md` 的选择规则 |
+| 使用项目自选技能 | 先读项目 `AGENTS.md` 的选择规则，再读取实际 `.agent/skills/`、`.agents/skills/` 或 `.codex/skills/` 入口 |
 | 起一个新项目/新机器的规则文件 | `templates/AGENTS.md` + skill `agent-bootstrap` |
 | 本机私有索引（SSH 别名、受控资料与硬盘路径） | `local/AGENTS.md`（若存在；不进 git） |
 
@@ -55,7 +55,7 @@ powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1
 
 ## 技能选择
 
-- 先读当前项目的 `AGENTS.md`；项目专用技能放在该项目的 `.agent/skills/`，由项目说明何时使用。
+- 先读当前项目的 `AGENTS.md` / `CLAUDE.md`；技能以项目声明和实际目录为准，不为统一目录名搬迁既有技能。知远、晓软桌面版在 `.codex/skills/` 中分别提供 `frontend-ui-change-strategy/SKILL.md` 和 `rongxinai-ui-adapter/SKILL.md`，UI 以各自 `DESIGN.md`、shadcn/ui 与 ai-elements 为准；企业版涉及 Ant Design 时仍读 `.agents/skills/antd/SKILL.md`（2026-10-07；详见项目记忆索引）。
 - 个人通用技能以本仓库 `skills/` 为唯一内容源。需要时先读对应 `SKILL.md`，按其中步骤执行；不要把项目技能复制进个人记忆层。
 - 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）、`antd`（Ant Design，项目内安装 `.agents/skills/antd` 时优先用项目份）、`Deli_AutoResearch`（长任务自治框架）。其它技能见本仓库 `README.md`。
 - 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
