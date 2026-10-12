@@ -2,7 +2,7 @@
 追加一条捕获到捕获区 agent-memory\notes\inbox.md，提交并推送。
 
 用法:
-  powershell -ExecutionPolicy Bypass -File $HOME\whz-harness\scripts\capture.ps1 -Text "要记住的事实"
+  powershell -ExecutionPolicy Bypass -File <仓库>\scripts\capture.ps1 -Text "要记住的事实"
   ... -Tag <机器/项目>        # 给条目加前缀，方便事后分类
   ... -NoPush
 
@@ -19,8 +19,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$HomeDir = $env:USERPROFILE
-$Repo = if ($env:MEMORY_REPO) { $env:MEMORY_REPO } else { Join-Path $HomeDir 'whz-harness' }
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$Repo = if ($env:MEMORY_REPO) { $env:MEMORY_REPO } else { Split-Path -Parent $ScriptDir }
 if (-not (Test-Path -LiteralPath (Join-Path $Repo '.git'))) { throw "$Repo 不是 git 仓库" }
 
 $InboxRel = 'agent-memory/notes/inbox.md'
@@ -29,7 +29,9 @@ if (-not (Test-Path -LiteralPath (Join-Path $Repo 'agent-memory'))) { throw "$Re
 # 敏感内容守卫：这个仓库是公开仓，完整 IP / 凭据一律不入库。
 $sensitive = '([0-9]{1,3}\.){3}[0-9]{1,3}|BEGIN [A-Z ]*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ssh -b '
 if ($Text -match $sensitive) {
-	Write-Error 'capture: 拒绝写入 —— 文本含完整 IP / 凭据特征。完整 IP 只写网段（172.18.5.***），真值放 local\ 或 ~\.ssh\config；受控原件只记文件名+sha256。'
+	# 用 [Console]::Error 而不是 Write-Error：$ErrorActionPreference='Stop' 会把 Write-Error
+	# 变成终止错误，exit 3 就不会执行，调用方拿到的退出码变成 1。
+	[Console]::Error.WriteLine('capture: 拒绝写入 —— 文本含完整 IP / 凭据特征。完整 IP 只写网段（172.18.5.***），真值放 local\ 或 ~\.ssh\config；受控原件只记文件名+sha256。')
 	exit 3
 }
 

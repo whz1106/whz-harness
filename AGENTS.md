@@ -37,12 +37,15 @@
 | win-main | Windows 11 Pro x64 / Intel i5-14500 / Windows Terminal | `C:\Users\Administrator` | `D:\rongxin\whz-harness` |
 | mac | macOS | `~/` | 推荐 `~/whz-harness` |
 
-默认克隆到各自家目录下的 `whz-harness`；若放在其它位置，以同步受管块给出的本机绝对路径为准，仓库内文档的相对路径始终以仓库根目录为基准。win-main 于 2026-09-30 移出 C 盘家目录，改放 `D:\rongxin\whz-harness`——与 `zhiyuanAaaS`、`zhiyuan-docs` 同在 `D:\rongxin` 下。该机器上 `scripts/sync.ps1` 的默认 `$Repo`（`$HOME\whz-harness`）已失效，必须显式传 `MEMORY_REPO`：
+默认克隆到各自家目录下的 `whz-harness`；若放在其它位置，以同步受管块给出的本机绝对路径为准，仓库内文档的相对路径始终以仓库根目录为基准。win-main 于 2026-09-30 移出 C 盘家目录，改放 `D:\rongxin\whz-harness`——与 `zhiyuanAaaS`、`zhiyuan-docs` 同在 `D:\rongxin` 下；`C:\Users\Administrator\whz-harness` 旧副本已于 **2026-10-08 删除**，本机只保留 D 盘这一份。
+
+`scripts/sync.*` / `capture.*` 一律**自定位**：默认仓库 = 脚本所在目录的父目录，不再依赖家目录路径。因此本机不需要再设置 `MEMORY_REPO`：
 
 ```powershell
-$env:MEMORY_REPO = 'D:\rongxin\whz-harness'
 powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1 -NoPull
 ```
+
+只有仓库被复制/移动到别处、或同时保留多份副本时，才用 `MEMORY_REPO` 显式指定要用哪一份（多副本并存时注入源会变得不确定，不要长期保留第二份）。
 
 ## 工具链
 

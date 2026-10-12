@@ -13,7 +13,7 @@ clone 到 Mac 或 Windows 后，运行一次 `scripts/sync.*`，把简短规则�
 | 64F 相关工作 | `machines/AGENTS.md`、`machines/RULES.md` | `machines/agc64f.md`；操作前只读核对当前状态 |
 | 64F 大模型部署 | 上一行机器规则 | `materials/agc64f-llm-deploy/README.md` → `materials/agc64f-llm-deploy/ASSETS.md` → `materials/agc64f-llm-deploy/AI_CONTEXT.md`；本机 `local/assets.local.md`（若存在） |
 | `four-test-v1` 工作 | 该项目仓库当前 `AGENTS.md` | 本仓库只提供 `materials/four-test/README.md` 指针和 64F 通用禁改规则 |
-| 知远企业版（zhiyuanAaaS / Agent-Enterprise-Protocol） | 项目仓各自 `AGENTS.md` + 本仓库 `agent-memory/projects/zhiyuan-enterprise.md` | antd 任务读项目 `.agents/skills/antd/SKILL.md`；部署读 `materials/zhiyuan-docs/README.md` → `zhiyuan-docs/07-deployment/k3s-bringup.md` |
+| 知远企业版（zhiyuanAaaS / Agent-Enterprise-Protocol） | 项目仓各自 `AGENTS.md` + 本仓库 `agent-memory/projects/zhiyuan-enterprise.md` | 产品/需求/交互读 `zhiyuan-docs/product/README.md`；部署与环境读 `zhiyuan-docs/guides/cicd-environment.md`（入口汇总 `materials/zhiyuan-docs/README.md`）；antd 任务读项目 `.agents/skills/antd/SKILL.md` |
 | 知远桌面应用（`D:/rongxin/RongxinAI`） | 项目 `AGENTS.md` / `CLAUDE.md` + `agent-memory/projects/zhiyuan-app.md` | UI 读 `DESIGN.md` 与 `.codex/skills/frontend-ui-change-strategy/SKILL.md`；复用 shadcn/ui + ai-elements |
 | 晓软定制桌面应用（`D:/rongxin/xiaoruan-ai-agent`） | 项目 `AGENTS.md` / `CLAUDE.md` + `agent-memory/projects/xiaoruan-app.md` | 定制读 `CUSTOMIZATION.md`；UI 读 `DESIGN.md` 与 `.codex/skills/frontend-ui-change-strategy/SKILL.md` |
 
@@ -118,7 +118,7 @@ powershell -ExecutionPolicy Bypass -File scripts\sync.ps1 -NoPull
 
 先编辑 `local/AGENTS.md`，删掉不存在的本机文件项；模型权重、镜像路径按 `templates/local-assets.md` 填入 `local/assets.local.md`，64F 最近一次只读观察按 `templates/agc64f-state.local.md` 填写。`local/` 不随 Git 同步，换电脑需自行安全转移或重新填写。
 
-若仓库放在其它位置，运行同步前把 `MEMORY_REPO` 设为实际目录（Mac：`export MEMORY_REPO=/实际路径`；PowerShell：`$env:MEMORY_REPO = '实际路径'`）。不要在已有仓库上重复运行 clone 命令。
+同步与捕获脚本默认使用**自己所在的仓库**（脚本目录的父目录），因此仓库放哪都不影响。仓库被复制/移动到别处、或有多个副本时，用 `MEMORY_REPO` 显式指定要用哪一份（Mac：`export MEMORY_REPO=/实际路径`；PowerShell：`$env:MEMORY_REPO = '实际路径'`）——不要长期保留第二份副本，多副本并存会让注入悄悄用错源。不要在已有仓库上重复运行 clone 命令。
 
 同步后检查目标工具的用户级文件是否含 `personal-memory`、`agent-memory`、`machines-memory` 三个受管块；建立了 `local/AGENTS.md` 时还应有 `local-memory`。再从**另一个项目目录新开 agent 会话**，让它指出 GitHub 账号、该项目的技能入口及 64F 禁改清单的位置，确认它实际读到了索引。技能能否原生自动列出需按所用工具另验。
 
@@ -138,7 +138,7 @@ bash scripts/capture.sh "某机器的坑" --tag agc64f
 bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意跳过 local/）
 ```
 
-`capture.sh` / `capture.ps1` 会自动提交，默认还会推送；`--no-push` / `-NoPush` 仅关闭推送，不关闭提交。只做本地记忆编辑时直接追加 inbox 并整理，提交/推送按实际授权执行。win-main 调用脚本前显式设置 `MEMORY_REPO`。
+`capture.sh` / `capture.ps1` 会自动提交，默认还会推送；`--no-push` / `-NoPush` 仅关闭推送，不关闭提交。只做本地记忆编辑时直接追加 inbox 并整理，提交/推送按实际授权执行。脚本自定位仓库，无需再设 `MEMORY_REPO`（win-main 的 C 盘旧副本已于 2026-10-08 删除）。
 
 改过注入层（`AGENTS.md` / `RULES.md` / `agent-memory/*` / `machines/*`）后必须跑一次 `sync`。
 

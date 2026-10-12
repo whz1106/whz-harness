@@ -39,7 +39,7 @@ ls ~/whz-harness/agent-memory/projects ~/whz-harness/materials
 
 ## 写入
 
-“记录/更新记忆”授权本地编辑和必要同步，不自动授权提交或推送。下方 capture 脚本会自动提交（默认还推送；`--no-push` / `-NoPush` 仍会提交），只在这些操作已获授权时使用；否则直接追加 inbox 并整理。win-main 当前路径为 `D:/rongxin/whz-harness`，使用脚本前设置 `MEMORY_REPO`，不要依赖失效的家目录默认值。
+“记录/更新记忆”授权本地编辑和必要同步，不自动授权提交或推送。下方 capture 脚本会自动提交（默认还推送；`--no-push` / `-NoPush` 仍会提交），只在这些操作已获授权时使用；否则直接追加 inbox 并整理。脚本自定位仓库（脚本目录的父目录），win-main 上仓库为 `D:/rongxin/whz-harness`，无需设置 `MEMORY_REPO`；仅当存在第二份副本或仓库被搬走时才用它显式指定。
 
 ```bash
 # 零散事实（只提交 inbox，一次一条）

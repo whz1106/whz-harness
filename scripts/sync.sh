@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # 把记忆仓库的各个「层」注入到各 agent 的用户级配置。
 #
-# 单一仓库 $HOME/whz-harness，内含四层（每层一个 marker block）：
+# 单一仓库（默认 = 本脚本所在目录的父目录，即脚本所在的那个仓库），内含四层（每层一个 marker block）：
 #   personal-memory  仓库根           规则 + 个人记忆：偏好、工具链、编码/提交习惯、通用坑
 #   agent-memory     agent-memory/    记忆系统：索引、项目记忆、捕获区
 #   machines-memory       machines/             业务环境信息与硬约束（kata/vfio/docker），高频更新
 #   local-memory     local/           本地投放区（gitignore）：真实地址、受控资料，clone 后自己放
 #
-# 用法: bash ~/whz-harness/scripts/sync.sh [--no-pull]
-# 环境变量: MEMORY_REPO（默认 ~/whz-harness）、MEMORY_LAYERS（默认见下）
+# 用法: bash <仓库>/scripts/sync.sh [--no-pull]
+# 环境变量: MEMORY_REPO（默认 = 脚本所在仓库根；仓库被复制到别处时显式指定）、MEMORY_LAYERS（默认见下）
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,7 +32,7 @@ if [ -z "${HOME:-}" ] || [ ! -d "$HOME" ]; then
 	exit 1
 fi
 
-REPO="${MEMORY_REPO:-$HOME/whz-harness}"
+REPO="${MEMORY_REPO:-$(dirname "$SCRIPT_DIR")}"
 LAYERS="${MEMORY_LAYERS:-personal-memory: agent-memory:agent-memory machines-memory:machines local-memory:local}"
 
 [ -d "$REPO/.git" ] || {

@@ -32,7 +32,7 @@
 | material | 指针 | 本体在哪 | 状态 |
 | --- | --- | --- | --- |
 | `four-test` | `materials/four-test/README.md` | 私有仓 `whz1106/four-test-v1`（当前项目）、`whz1106/four-test`（旧） | 只保留导航；状态到项目仓核对 |
-| `zhiyuan-docs` | `materials/zhiyuan-docs/README.md` | 私有仓 `rongxinzy/zhiyuan-docs`；本机已 clone `D:/rongxin/zhiyuan-docs/` | 最后更新 2026-09-24（k3s-bringup.md） |
+| `zhiyuan-docs` | `materials/zhiyuan-docs/README.md` | 私有仓 `rongxinzy/zhiyuan-docs`；本机已 clone `D:/rongxin/zhiyuan-docs/` | 本企业版**主要资料**；2026-10-08 改版（路径压平，`product/README.md` 为产品文档唯一入口，旧路径对照 `migration.md`） |
 | `antd`（skill） | `skills/antd/SKILL.md` | `npx skills add ant-design/ant-design-cli`（离线元数据，已收进本仓 `skills/antd/`） | 装入 2026-09-29 |
 
 **为什么不做 submodule**：本仓库是公开的，挂一个指向私有仓的 submodule，别人 clone 会直接报错；而且要求"clone 一个仓库就能用"。所以只写指针，用的时候 `gh repo clone`。
