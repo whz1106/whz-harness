@@ -172,6 +172,18 @@ NodePort：30180 AEP 控制面 / 30181 网关 authorizer / 30182 AEP agent-contr
 - **WeKnora 目录上传约定**：相对路径编码在一个 **`fileName`** 表单字段里（`types.SplitKnowledgeRelativePath` 拆目录与文件名；`NormalizeKnowledgeFolderPath` 约束深度 ≤16、路径 ≤1024、段 ≤128）。portal 只放行该字段并透传，**不在 portal 另立路径规则**。
 - 构建/运行源码在 `D:/rongxin/zhiyuan-deployment.local/2026-10-12-build-72c9eedc/sources/{governance,aaas}`（就是产出运行镜像的那份，commit `8b7f85c` / `4d1d774`）；`D:/rongxin/aep-deerflow-governance` 是**旧 checkout**，没有 managed 端点，别在那儿改。
 
+## 知识库能力的两个环境坑（2026-10-13 实测并修复）
+
+1. **CRD 落后会静默吞字段（本机踩过）**：本地 `digitalemployees` CRD 的 `spec.knowledge` 旧版只有 `mcpURL`/`type`，portal 写 `spec.knowledge.bases` 被 Kubernetes **结构化裁剪静默丢弃**——`PATCH /api/v1/employees/{name}` 返回 **200**、日志还打 `employee updated fields=["knowledgeBases"]`，但 CR 里字段根本不存在、无任何报错。后果：数字员工绑定知识库永不生效 → 员工侧检索必然 `403 knowledge access denied`。
+   - 修法：`kubectl apply -f operator/config/crd/bases/digitalemployee.zhiyuan.io_digitalemployees.yaml`（或 `charts/zhiyuan-stack/crds/digitalemployee.yaml`）。**注意 `k3s/digital-employee-crd.example.yaml` 是旧版（无 bases），别用**。
+   - 检索的授权规则（`portal/knowledge_access.go`）：**员工显式绑定 ∩ 调用者请求的 KB ∩ 调用者/团队 grant ∩ 注册表**，**无管理员旁路，nil 和空都 = deny-all**。绑定在 CR，授权在 portal DB（`PUT /api/v1/knowledge/managed/bases/{id}/grants`，body `{"grants":[{"type":"user|team","id":"…"}]}`，全量替换）。
+   - 检索接口形状：`POST /api/v1/knowledge/employees/{name}/search`，body 必须含 `query` + `knowledge_base_ids` + `mode:"hybrid"` + `limit`(1–30)，否则 400。
+
+2. **新 operator 需要 KEDA CRD**：`issue158` 线的 operator 在 hibernation **关闭**时也会 `Delete(ScaledObject)`；集群没有 KEDA CRD 时 RESTMapper 报 `no matches for kind "ScaledObject" in version "keda.sh/v1alpha1"`，员工相位直接 `Error`。
+   - 修法：只装 KEDA 的 6 个 CRD 即可（`curl -L …/kedacore/keda/releases/download/v2.18.0/keda-2.18.0.yaml`，抽出 `kind: CustomResourceDefinition` 后用 **`kubectl apply --server-side`**；客户端 apply 会因注解体积/文件体量失败）。**装完必须重启 operator**，否则其 RESTMapper 缓存仍报同一个错。真正启用 hibernation 才需要完整 KEDA（集群已有 cert-manager）。
+   - operator 镜像：新的用 `docker.io/zhiyuan-local/knowledge-operator:issue158-gov-8b7f85c`（与 portal #59 同分支）；旧的 `zhiyuan/de-operator:0.9.0`（内网镜像仓的旧版本，仓地址见 `local/`）不认识 `bases`。
+   - 白名单落地路径：operator 渲染进 CM **`de-<name>-config`** 的 `config.yaml`（`extensions.middlewares[0].kwargs.knowledge_bases` + `knowledge_online_authorization: true`），靠 pod 模板注解 `zhiyuan.io/config-hash` 触发 Recreate；`de-<name>-extensions` 只放 `mcpServers`。
+
 ## 待办 / 缺口
 
 - [ ] **公开仓凭据泄漏整改**：`whz-harness` 的 `agent-memory/personal.md`、本档案旧版曾写入 Artifactory 网页口令与 demo 管理员口令（已推到公开 GitHub）。已推送历史不重写 → 必须视为已泄漏：**轮换该口令**，并把真实值只放 `local/`；`personal.md` 的同类行待脱敏。
