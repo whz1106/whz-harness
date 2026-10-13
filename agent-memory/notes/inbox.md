@@ -8,6 +8,12 @@
 
 （新条目追加在这里下面）
 
+- 2026-10-13T12:00:00Z [win-main] WSL k3s 开发集群：本地推理已下线，改走内网 GLM 网关（`172.18.5.***:3000`，模型 `GLM-5.3-Flash`）；API key 存在集群 env 与 wasmplugin 里，不落任何文件。本机只保留嵌入服务（`llama-embed`，512 维）。
+- 2026-10-13T12:00:00Z [win-main] 搭档（pi-companion）与数字员工链路统一经 higress 调 `bench-glm`（wasmplugin `aep-ai-proxy-glm` 把 `bench-glm` 映射到 `GLM-5.3-Flash` 并注入 token）。搭档的模型 **id 必须保持 `bench-glm`**：历史会话的 assistant 条目里记录了 `companion/bench-glm`，改 id 后提交会以 `no_model` 直接失败。
+- 2026-10-13T12:00:00Z [win-main] `deerflow-gov` 镜像：注册表 push 无凭据（`unauthorized to upload`），离线流程改为 `docker save | sudo k3s ctr images import -` + `docker.io/zhiyuan-local/*` 标签。DigitalEmployee CR 的 `runtime.image` 必须指向含 `knowledge_bases` 支持的治理包 —— 旧的 `v3` 会在 `AepGovernanceMiddleware.__init__` 触发 `TypeError: object.__init__()`，整轮 run 直接失败。
+- 2026-10-13T12:00:00Z [win-main] 本集群的 admin 控制台是 `de-admin-console`（NodePort 30196），镜像 `docker.io/zhiyuan-local/admin-console:*`；`deploy/Dockerfile.admin` 的 `FROM node:22-alpine` 在 docker 代理（`127.0.0.1:7897`）不可用时拉不下来，可用本机已有 `node:24-alpine` 打 `node:22-alpine` 标签后离线构建。
+- 2026-10-13T12:00:00Z [win-main] portal 的 `POST /api/v1/employees/<id>/chat/threads` 需要带 `Origin`/`Referer`（否则 403，看着像鉴权坏了，其实只是 CSRF 来源校验）。
+
 ## 已整理（保留近期几条作为脉络，其余删掉）
 
 - 2026-09-24T00:00:00Z [win-main] 记忆体系统一为一个公开仓库 `whz-harness`，四层注入：`personal-memory`（根）、`agent-memory`（记忆系统）、`machines-memory`（环境与硬约束）、`local-memory`（本地投放区，gitignore）。原来的独立仓库 `agent-memory` / `work-memory` 均已废弃。
