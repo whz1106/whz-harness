@@ -155,11 +155,28 @@ NodePort：30180 AEP 控制面 / 30181 网关 authorizer / 30182 AEP agent-contr
 - **遗留**：`src/ui/components/ui/*`（19 个 shadcn 原语）全仓已无任何引用（`src/admin` 一个都没用）；`AGENTS.md` / `DESIGN.md` 2026-10-08 已按实况改正为 antd。
 - **antd skill**：antd 相关任务**必须**走项目内 `.agents/skills/antd/SKILL.md`，不凭记忆写 props/token。
 
+## 跨仓 PR 线：原生知识管理（2026-10-13 核对）
+
+原生企业知识管理是**跨仓同分支**实施：WeKnora / aep-deerflow-governance / ZhiyuanAaaS 三仓的 head 分支同名 `feat/knowledge-phase-a`，文档仓另起 `docs/native-knowledge-management`。用户会**最终合并这些 PR，冲突可以解决、不必回避**。后续改动按下表归属推进，**不要另起新 PR**：
+
+| 仓 | PR | head | base | 状态（2026-10-13） | 承载 |
+|---|---|---|---|---|---|
+| rongxinzy/WeKnora | #3 | `feat/knowledge-phase-a` | `zhiyuan/helm-extra-env` | open（draft） | fork 的生命周期/分块图片 |
+| rongxinzy/aep-deerflow-governance | **#45** | `feat/knowledge-phase-a` | main | **已合并** | managed 知识 API（portal） |
+| rongxinzy/ZhiyuanAaaS | **#165** | `feat/knowledge-phase-a` | main | open（draft，与 main CONFLICTING） | 控制台原生知识管理 |
+| rongxinzy/zhiyuan-docs | **#29** | `docs/native-knowledge-management` | main | open | `product/README.md` 的 FR-KB-03 / ER-AC-11 口径 |
+| rongxinzy/aep-deerflow-governance | **#59**（2026-10-13 新开） | `feat/knowledge-folder-upload` | main | open | portal 放行可选 `fileName`（目录上传） |
+
+- **归属规则**：控制台改动 → 推到 `feat/knowledge-phase-a`（自动进 #165，别再新开）；portal 改动 → 新 PR（#45 已合并，无法追加）；文档口径 → 追加到 `docs/native-knowledge-management`（进 #29）；WeKnora 不动（是复用）。
+- **#29 已把口径定死**：复用 WeKnora 的解析/存储/检索能力，**由知远原生页面调用已鉴权接口**，关键流程不跳转 WeKnora 页面、不要求二次登录，外部管理链接不作为验收依据 → "暴露 WeKnora 原生 UI"与产品口径冲突，不要走。
+- **WeKnora 目录上传约定**：相对路径编码在一个 **`fileName`** 表单字段里（`types.SplitKnowledgeRelativePath` 拆目录与文件名；`NormalizeKnowledgeFolderPath` 约束深度 ≤16、路径 ≤1024、段 ≤128）。portal 只放行该字段并透传，**不在 portal 另立路径规则**。
+- 构建/运行源码在 `D:/rongxin/zhiyuan-deployment.local/2026-10-12-build-72c9eedc/sources/{governance,aaas}`（就是产出运行镜像的那份，commit `8b7f85c` / `4d1d774`）；`D:/rongxin/aep-deerflow-governance` 是**旧 checkout**，没有 managed 端点，别在那儿改。
+
 ## 待办 / 缺口
 
 - [ ] **公开仓凭据泄漏整改**：`whz-harness` 的 `agent-memory/personal.md`、本档案旧版曾写入 Artifactory 网页口令与 demo 管理员口令（已推到公开 GitHub）。已推送历史不重写 → 必须视为已泄漏：**轮换该口令**，并把真实值只放 `local/`；`personal.md` 的同类行待脱敏。
 - [ ] gateway 80 端口 400 定论（`[推测]` ai-proxy 层拒绝，需复验真实对话请求）
-- [ ] DeepSeek key 已入 WasmPlugin——轮换时机与归属（个人 key 还是项目 key）待与组长确认
+- [ ] DeepSeek key 已入 WasmPlugin——轮换时机与归属（个人 key 还是项目 key）待与组长确认。**2026-10-13 本机已把该 key 从 `aep-ai-proxy-glm` 换成 dummy（本地集群改指 llama.cpp），但旧 key 仍在回滚备份 `~/botui-backup/wasmplugins-*.yaml` 里、且已见于历史配置 → 仍须轮换**
 - [ ] ES（日志）：目前全方案无 Elasticsearch，日志走 PostgreSQL+Prometheus。是否引入 ES 待组长明确
 - [ ] WeKnora 独立账号与文档入库/检索验收（2026-10-08 续查：当前浏览器管理入口为本机 30163，跳转通过不等于内容检索通过）
 - [ ] `zhiyuanAaaS` 里未被任何代码引用的 shadcn 原语（`src/ui/components/ui/*`，19 个文件）是否删除 —— 待用户决定
