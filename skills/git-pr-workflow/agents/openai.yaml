@@ -1,4 +1,4 @@
 interface:
   display_name: "Git PR Workflow"
-  short_description: "Draft safe commits and high-signal PRs."
-  default_prompt: "使用 $git-pr-workflow 按目标仓库规则检查改动、整理提交和 PR/MR 内容，并保护已推送历史。"
+  short_description: "Manage PR/MR lifecycle: claim, track acceptance in .docs, merge, close issues, clean worktrees."
+  default_prompt: "使用 $git-pr-workflow 以 PR 管理者身份处理 GitHub PR 与 GitLab MR：领取时在 .docs/pr-<编号>-<slug>.md 记录问题与验收标准，合并前逐条验收，合并后关闭关联 issue 并清理源分支与 worktree，同时保护已推送历史。"

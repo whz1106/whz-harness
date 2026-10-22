@@ -60,6 +60,7 @@ powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1
 
 - 先读当前项目的 `AGENTS.md` / `CLAUDE.md`；技能以项目声明和实际目录为准，不为统一目录名搬迁既有技能。知远、晓软桌面版在 `.codex/skills/` 中分别提供 `frontend-ui-change-strategy/SKILL.md` 和 `rongxinai-ui-adapter/SKILL.md`，UI 以各自 `DESIGN.md`、shadcn/ui 与 ai-elements 为准；企业版涉及 Ant Design 时仍读 `.agents/skills/antd/SKILL.md`（2026-10-07；详见项目记忆索引）。
 - 个人通用技能以本仓库 `skills/` 为唯一内容源。需要时先读对应 `SKILL.md`，按其中步骤执行；不要把项目技能复制进个人记忆层。
+- 编写、修改或重构 Go 代码前，读取 `skills/use-modern-go/SKILL.md`，用其 CLI 按目标文件的 `go.mod` / `go.work` 查询完整指南；不要据本机较新工具链提升项目 Go 版本。项目安全、契约与行为约束继续优先执行（JetBrains/go-modern-guidelines，2026-10-14）。
 - 本仓库的全局技能入口：`agent-bootstrap`（新项目/机器）、`harness-memory`（记忆）、`machine-ops-guard`（远程机器）、`materials-intake`（外部资料）、`git-pr-workflow`（提交与 PR）、`clarify-before-coding`（澄清再动手）、`adversarial-code-review`（对抗式审查）、`antd`（Ant Design，项目内安装 `.agents/skills/antd` 时优先用项目份）、`Deli_AutoResearch`（长任务自治框架）。其它技能见本仓库 `README.md`。
 - 注入层：`personal-memory`（根）/ `agent-memory`（记忆系统）/ `machines-memory`（环境）/ `local-memory`（本地投放）。
 
@@ -70,6 +71,8 @@ powershell -ExecutionPolicy Bypass -File D:\rongxin\whz-harness\scripts\sync.ps1
 - 破坏性操作（`push --force`、删数据、改全局配置、动别人的目录）先确认。
 - 优先复用已有的约定，不要在既有约定旁另起一套。
 - 新建项目/新机器时，用 `templates/AGENTS.md` 生成一份本地 `AGENTS.md`，并把该环境的硬约束抄进去（见 skill `agent-bootstrap`）。
+- **PR 提交完成就汇报，不要盯着 CI 等结果**：推送/开好 PR 后立刻给结论，只有 CI 失败、或需要我决策时才再回报（2026-10-12）。
+- **每次 PR 评审结束后发布评审评论**：把对应问题、建议和修改策略写到该 PR 评论，标明 reviewer、审查提交 SHA、验证证据和未解决项；这是用户明确授权的评审流程，不自动授权 approve、request changes、合并或部署（2026-10-13；来源：用户明确指令）。
 
 ## 已知坑
 

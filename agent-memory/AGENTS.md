@@ -46,7 +46,7 @@ agent-memory/
 | 个人偏好与工作方式 | `agent-memory/personal.md` | 交付要可验证、回答要短、破坏性操作先确认 |
 | 项目：64F 大模型多实例部署 | `agent-memory/projects/agc64f-llm-deploy.md` | 三个模型三选一，Docker+Kata 混合，nginx :8000 聚合 |
 | 项目：four-test v1 多模态压测 | `agent-memory/projects/four-test-v1.md` | 仅指向独立项目仓库；细节以该仓当前 `AGENTS.md` 为准 |
-| 项目：知远企业版（Zhiyuan Enterprise） | `agent-memory/projects/zhiyuan-enterprise.md` | AEP + 知远企业扩展，k3s 全栈部署（runbook 在 zhiyuan-docs） |
+| 项目：知远企业版（Zhiyuan Enterprise） | `agent-memory/projects/zhiyuan-enterprise.md` | AEP + 知远企业扩展，k3s 全栈部署（runbook 在 zhiyuan-docs）；两类角色统一目标产品模型以 zhiyuan-docs 正文为准，**引用前先 pull**（2026-10-14） |
 | 项目：知远桌面应用（RongxinAI） | `agent-memory/projects/zhiyuan-app.md` | `D:/rongxin/RongxinAI`；先读项目 AGENTS.md / CLAUDE.md；UI 按 DESIGN.md 与项目开发技能（2026-10-07） |
 | 项目：晓软桌面定制分支 | `agent-memory/projects/xiaoruan-app.md` | `D:/rongxin/xiaoruan-ai-agent`；先读项目 AGENTS.md / CLAUDE.md；定制边界见 CUSTOMIZATION.md（2026-10-07） |
 | 环境（机器与硬约束） | `machines/AGENTS.md` | kata/vfio/docker 的禁改项，动手前必读 |

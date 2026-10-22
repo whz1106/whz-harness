@@ -1,13 +1,21 @@
 ---
 name: git-pr-workflow
-description: Prepare commits and PR/MR content, inspect CI failures, manage branches, and backport fixes while preserving local changes and published history. Follow the target repository's language, branch, and validation rules.
+description: Act as the PR/MR manager for GitHub and GitLab — claim a PR, write its problem and acceptance criteria into .docs/pr-<N>-<slug>.md, verify acceptance, merge, close the linked issues, and clean up branches and worktrees while preserving local changes and published history. Follow the target repository's language, branch, and validation rules.
 ---
 
 # Git PR Workflow
 
 ## Overview
 
-Use this skill to run a safe Git workflow for feature delivery, bugfix delivery, release backports, and CI triage.
+Use this skill as a **PR/MR manager**, not only a commit helper. The job covers the whole lifecycle:
+
+1. claim the PR/MR and record its problem statement, scope, and acceptance criteria in the repository's `.docs/` directory
+2. keep the branch reviewable (commit hygiene, target-branch divergence, CI triage)
+3. run the acceptance checks before merging and keep the evidence
+4. merge with the repository's merge method, then close out GitHub issues / GitLab issues
+5. clean up source branches, worktrees, and local refs
+
+GitHub PR and GitLab MR are the same role in this skill. Where they differ, use the parity table in [GitHub And GitLab Parity](#github-and-gitlab-parity).
 
 Prefer narrow, explicit operations over broad staging or history edits. Read the target repository's current AGENTS.md first. Its language and branch rules take precedence over this skill's defaults; ZhiYuan and Xiaoruan desktop repositories require English Conventional Commits. Preserve local work and never rewrite published history.
 
@@ -21,13 +29,18 @@ Use this skill for requests such as:
 - `这个 bug 要回补到 release/1.0，帮我走 cherry-pick 流程`
 - `看看这个 CI 为什么失败，如果是代码问题给出解决方案`
 - `我准备提 MR，先帮我检查是不是已经 rebase 到远端目标分支`
+- `领取 #12 这个 PR，把问题和验收标准写到 .docs 里`
+- `这个 PR 验收通过了就合并，把关联 issue 关掉`
+- `合并完把源分支和 worktree 清理掉`
 
 When the request is ambiguous, first identify:
 
+- platform and repository (GitHub or GitLab, which remote)
 - current branch
 - target branch
 - whether local changes exist
-- whether the user wants diagnosis only or diagnosis plus implementation
+- whether the user wants diagnosis only, or diagnosis plus implementation
+- whether the user is claiming a PR, submitting one, or merging one
 
 ## Required Rules
 
@@ -40,6 +53,9 @@ Always enforce these rules:
 - Never use force push, including `--force-with-lease`, or bypass verification hooks.
 - Preserve staged, unstaged, and untracked user changes unless the user explicitly approves a destructive action.
 - When CI failure blocks merge or release and is tied to logic, provide a concrete cause and a concrete fix plan.
+- Every PR/MR this skill manages has a tracking document under `.docs/` before merge. No tracking document, no merge unless the user explicitly waives it.
+- Never report an acceptance criterion as passed without the command, output, or evidence that proves it.
+- A merged PR/MR is not closed work: the linked issue, its status label, the source branch, and the worktree must be closed out before reporting completion.
 
 ## Safety Gate
 
@@ -51,6 +67,7 @@ Run `git status --short` before any action that may change branch state or commi
 - `git commit`
 - `git reset`
 - `git clean`
+- `git worktree remove`, `git branch -D`
 
 If the working tree is not clean:
 
@@ -65,6 +82,8 @@ If the working tree is not clean:
 5. Stop before any destructive action until the user decides.
 
 Do not use `git add .` or `git add -A`. Stage only the intended files with explicit paths or `git add -p`. A dirty worktree does not block read-only review or committing already authorized, isolated changes; stop only when the next operation risks unrelated work.
+
+Before `git worktree remove`, check the worktree for uncommitted or untracked files with `git -C <worktree> status --short` and preserve anything the user still needs (copy tracking documents such as `.docs/*.md` into the main checkout) before deletion.
 
 ## Branch Naming
 
@@ -173,6 +192,71 @@ git push origin fix/<bug>-release-<version>
 
 Prefer small, isolated bugfix commits on `dev` so they can be cherry-picked cleanly onto release branches.
 
+## Claiming A PR Or MR
+
+Claiming means taking ownership of review, acceptance, and merge for an existing PR/MR. Do it when the user says `领取`, `认领`, `接手`, `claim`, or assigns a PR/MR number.
+
+Steps:
+
+1. Read the PR/MR: title, description, source and target branch, commits, diff, current CI state, linked issues, and review comments.
+2. Confirm the platform and repository (`gh repo view` / `glab repo view` or the remote URL) — do not assume `origin`.
+3. Create the tracking document at `.docs/pr-<number>-<slug>.md` in the repository checkout (use the PR/MR number; `<slug>` is a short kebab-case version of the title). Reuse an existing document for the same number instead of creating a second one.
+4. Fill it from the template below: the problem the PR solves, the scope it does and does not cover, and the acceptance criteria that must be true before merge.
+5. Link the document from the PR/MR (description or a comment) so reviewers see the criteria that will be enforced.
+6. Report the claim, the document path, and any blocking gaps (no acceptance criteria derivable from the PR, missing linked issue, broken CI, target branch mismatch).
+
+The tracking document is a durable artifact: do not delete it after merge. It is the local record of what was agreed.
+
+### Tracking Document Template
+
+```markdown
+# PR #<number> — <title>
+
+- 平台 / 仓库：GitHub `owner/repo` / GitLab `group/project`
+- 链接：<PR/MR URL>
+- 分支：`<source>` → `<target>`
+- 关联 issue：<#N 列表，或「无」>
+- 领取人 / 领取时间：<user> / <YYYY-MM-DD>
+
+## 背景与问题
+
+<这个 PR 要解决的问题，来自 issue 或用户描述的事实；区分事实与推测。>
+
+## 范围
+
+- 包含：<改了什么，按模块列>
+- 不包含：<明确排除的内容、后续 issue>
+
+## 验收标准
+
+- [ ] AC-1 <可独立判定的描述>（证据：<命令/用例/接口返回>）
+- [ ] AC-2 <...>
+- [ ] AC-3 <...>
+
+验收标准必须可判定：能给出命令、测试名、接口响应或界面操作路径；不写「体验良好」这类无法验证的条目。
+
+## 验证记录
+
+| 时间 | 检查项 | 命令或操作 | 结果 |
+|---|---|---|---|
+|  |  |  |  |
+
+## 风险与回滚
+
+<兼容性、数据迁移、部署顺序、回滚步骤；无风险也要写明依据。>
+
+## 合并与收尾
+
+- 合并方式：<merge / squash / rebase，按仓库设置>
+- issue 关闭策略：<`Closes #N` / 合并后手动关闭 / 保持打开并更新状态标签>
+- 部署顺序：<若涉及多个仓库，写明先后>
+- 分支与 worktree 清理：<是否删除源分支、移除哪个 worktree>
+
+## 状态
+
+<待办 / 进行中 / 待评审 / 已合并 / 已关闭；每行带日期与依据>
+```
+
 ## PR Or MR Preparation
 
 Before drafting PR content:
@@ -182,6 +266,7 @@ Before drafting PR content:
 3. Call out risk, verification, and whether a release cherry-pick is required.
 4. State the exact target branch.
 5. State the target-branch divergence and any merge or unpublished rebase performed.
+6. Point at the tracking document (`.docs/pr-<number>-<slug>.md`) and keep its acceptance criteria consistent with the PR description.
 
 Use the repository's PR language requirements. Keep titles and descriptions concrete and include:
 
@@ -191,8 +276,73 @@ Use the repository's PR language requirements. Keep titles and descriptions conc
 - What risks or rollback notes exist
 - Whether cherry-pick is required
 - What the target branch is
+- Which issues it closes
 
 Do not claim tests passed if they were not run. Do not hide known risks.
+
+## Acceptance Before Merge
+
+Merge is allowed only after each acceptance criterion in the tracking document is either proven or explicitly waived by the user.
+
+For every criterion:
+
+1. Run the specific check (test, curl, UI path, migration dry run) rather than trusting the PR description.
+2. Record command and observed result in the tracking document's verification table.
+3. Mark the checkbox only when the evidence exists.
+
+Also verify before merging:
+
+- CI status is known: `gh pr checks <N>` / `glab ci status`, and any red job is classified as code, flake, or infrastructure. Name the failing job and the reason; never merge silently past a red pipeline.
+- CI gate policy: if the repository blocks merge on a pipeline, wait or fix; if the gate is disabled, state explicitly that the pipeline was red and why the merge still proceeded.
+- Target branch is not protected against your role; check merge permission and required approvals first.
+- No conflict, no draft state, no requested changes pending.
+- Deployment order across repositories is written down (e.g. backend before frontend).
+
+## Merge And Issue Close-out
+
+Merge with the repository's configured method (do not squash unless the repository or the user says so):
+
+```bash
+# GitHub
+gh pr merge <N> --merge          # or --squash / --rebase per repo setting
+# GitLab
+glab mr merge <N> --yes
+```
+
+Then close out the linked issues. Both platforms honor closing keywords in the PR/MR description or commit message:
+
+- `Closes #N`, `Fixes #N`, `Resolves #N` — close on merge into the default branch
+- `Related to #N` — creates a cross-reference only, does **not** close
+
+Closing-keyword caveat: keywords only take effect at merge time from the description/commits. If the PR is already merged, close the issue explicitly and reference the merge commit.
+
+Manual close-out sequence when keywords are absent or the merge already happened:
+
+```bash
+# GitHub
+gh issue close <N> --comment "已由 #<PR> 合并（<merge-commit>）交付。"
+gh issue edit <N> --add-label "status:..."; gh issue edit <N> --remove-label "status:closed"
+# GitLab
+glab issue close <N> --message "已由 !<MR> 合并（<merge-commit>）交付。"
+glab issue update <N> --label "状态:待评审" --unlabel "状态:进行中"
+```
+
+Rules:
+
+- Close an issue only when the delivered scope actually satisfies its acceptance criteria; otherwise keep it open and update its status label, stating the remaining gap.
+- Record the merge commit SHA on the issue so the link survives later label changes.
+- Never close an issue that other open PRs/MRs still reference as incomplete work.
+- Verify the result (`closes_issues` / the issue's related-MR panel), then report.
+
+## Post-Merge Cleanup
+
+After a merge is confirmed:
+
+1. Delete the source branch (most GitLab projects do it automatically; GitHub needs `gh pr merge --delete-branch` or a manual delete).
+2. Remove the source branch worktree: `git worktree remove <path>` after checking it is clean, then `git worktree prune`.
+3. Delete the local branch: `git branch -d <branch>` (use `-D` only after confirming the commits are contained in the merged target branch).
+4. Keep the tracking document. Copy anything still valuable out of the worktree before removal.
+5. Report the merge commit, deleted branch/worktree, issue state, and any remaining red CI.
 
 ## Pre-Submission Checklist
 
@@ -205,6 +355,7 @@ Before commit, PR, or MR submission, verify:
 - target branch is confirmed
 - target-branch divergence has been checked and published history is preserved
 - required tests or checks have been run, or the lack of verification is explicitly stated
+- the tracking document exists and its acceptance criteria match the actual change
 - if the change may need release backport, the commit is small enough to cherry-pick cleanly
 
 Before final submission, report any unresolved risk, skipped validation, or follow-up work explicitly in the PR or MR description.
@@ -246,6 +397,29 @@ Preferred analysis flow:
 
 Do not silently modify code unless the user asked for a fix. Diagnosis and implementation are separate unless the user combines them.
 
+## GitHub And GitLab Parity
+
+| Task | GitHub | GitLab |
+|---|---|---|
+| PR / MR | Pull request | Merge request |
+| View | `gh pr view <N>` | `glab mr view <N>` |
+| Diff | `gh pr diff <N>` | `glab mr diff <N>` |
+| Checks / pipeline | `gh pr checks <N>` | `glab ci status` |
+| Review comment | `gh pr review <N>` / `gh pr comment <N>` | `glab mr note <N>` |
+| Merge | `gh pr merge <N> --merge` | `glab mr merge <N> --yes` |
+| Issue close | `gh issue close <N>` | `glab issue close <N>` |
+| Issue labels | `gh issue edit <N> --add-label` | `glab issue update <N> --label` |
+| Raw API | `gh api` | `glab api` |
+| Branch protection | Rulesets / branch protection | Protected branches |
+
+Behavioral parity notes:
+
+- Both close issues from `Closes/Fixes/Resolves #N` in the PR/MR description at merge time.
+- Both auto-delete the source branch only if configured; verify instead of assuming.
+- GitHub squash-merges by default in many repos, GitLab keeps the source commits unless squash is enabled. Read the repository setting before merging.
+- GitLab can auto-merge when the pipeline is running; GitHub waits on required checks. If the pipeline can never go green (known infrastructure failure), record it and merge explicitly rather than leaving an auto-merge pending.
+- Branch deletion does not delete local worktrees; clean them separately in both platforms.
+
 ## Communication Rules
 
 Be explicit when reporting Git state:
@@ -255,5 +429,7 @@ Be explicit when reporting Git state:
 - Whether the working tree is dirty
 - Whether an unpublished rebase or a cherry-pick was performed
 - Whether an ordinary push is possible or remote divergence still needs resolution
+- Tracking document path and acceptance status
+- Merged commit SHA, issue state, deleted branch/worktree, and any remaining red CI
 
 If a command could discard or overwrite user work, stop and get approval first.

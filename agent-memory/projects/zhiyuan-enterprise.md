@@ -155,11 +155,65 @@ NodePort：30180 AEP 控制面 / 30181 网关 authorizer / 30182 AEP agent-contr
 - **遗留**：`src/ui/components/ui/*`（19 个 shadcn 原语）全仓已无任何引用（`src/admin` 一个都没用）；`AGENTS.md` / `DESIGN.md` 2026-10-08 已按实况改正为 antd。
 - **antd skill**：antd 相关任务**必须**走项目内 `.agents/skills/antd/SKILL.md`，不凭记忆写 props/token。
 
+## 跨仓 PR 线：原生知识管理（2026-10-13 核对）
+
+原生企业知识管理是**跨仓同分支**实施：WeKnora / aep-deerflow-governance / ZhiyuanAaaS 三仓的 head 分支同名 `feat/knowledge-phase-a`，文档仓另起 `docs/native-knowledge-management`。用户会**最终合并这些 PR，冲突可以解决、不必回避**。后续改动按下表归属推进，**不要另起新 PR**：
+
+| 仓 | PR | head | base | 状态（2026-10-13） | 承载 |
+|---|---|---|---|---|---|
+| rongxinzy/WeKnora | #3 | `feat/knowledge-phase-a` | `zhiyuan/helm-extra-env` | open（draft） | fork 的生命周期/分块图片 |
+| rongxinzy/aep-deerflow-governance | **#45** | `feat/knowledge-phase-a` | main | **已合并** | managed 知识 API（portal） |
+| rongxinzy/ZhiyuanAaaS | **#165** | `feat/knowledge-phase-a` | main | open（draft，与 main CONFLICTING） | 控制台原生知识管理 |
+| rongxinzy/zhiyuan-docs | **#29** | `docs/native-knowledge-management` | main | open | `product/README.md` 的 FR-KB-03 / ER-AC-11 口径 |
+| rongxinzy/aep-deerflow-governance | **#59**（2026-10-13 新开） | `feat/knowledge-folder-upload` | main | open | portal 放行可选 `fileName`（目录上传） |
+
+- **归属规则**：控制台改动 → 推到 `feat/knowledge-phase-a`（自动进 #165，别再新开）；portal 改动 → 新 PR（#45 已合并，无法追加）；文档口径 → 追加到 `docs/native-knowledge-management`（进 #29）；WeKnora 不动（是复用）。
+- **#29 已把口径定死**：复用 WeKnora 的解析/存储/检索能力，**由知远原生页面调用已鉴权接口**，关键流程不跳转 WeKnora 页面、不要求二次登录，外部管理链接不作为验收依据 → "暴露 WeKnora 原生 UI"与产品口径冲突，不要走。
+- **WeKnora 目录上传约定**：相对路径编码在一个 **`fileName`** 表单字段里（`types.SplitKnowledgeRelativePath` 拆目录与文件名；`NormalizeKnowledgeFolderPath` 约束深度 ≤16、路径 ≤1024、段 ≤128）。portal 只放行该字段并透传，**不在 portal 另立路径规则**。
+- 构建/运行源码在 `D:/rongxin/zhiyuan-deployment.local/2026-10-12-build-72c9eedc/sources/{governance,aaas}`（就是产出运行镜像的那份，commit `8b7f85c` / `4d1d774`）；`D:/rongxin/aep-deerflow-governance` 是**旧 checkout**，没有 managed 端点，别在那儿改。
+
+## 知识库能力的两个环境坑（2026-10-13 实测并修复）
+
+1. **CRD 落后会静默吞字段（本机踩过）**：本地 `digitalemployees` CRD 的 `spec.knowledge` 旧版只有 `mcpURL`/`type`，portal 写 `spec.knowledge.bases` 被 Kubernetes **结构化裁剪静默丢弃**——`PATCH /api/v1/employees/{name}` 返回 **200**、日志还打 `employee updated fields=["knowledgeBases"]`，但 CR 里字段根本不存在、无任何报错。后果：数字员工绑定知识库永不生效 → 员工侧检索必然 `403 knowledge access denied`。
+   - 修法：`kubectl apply -f operator/config/crd/bases/digitalemployee.zhiyuan.io_digitalemployees.yaml`（或 `charts/zhiyuan-stack/crds/digitalemployee.yaml`）。**注意 `k3s/digital-employee-crd.example.yaml` 是旧版（无 bases），别用**。
+   - 检索的授权规则（`portal/knowledge_access.go`）：**员工显式绑定 ∩ 调用者请求的 KB ∩ 调用者/团队 grant ∩ 注册表**，**无管理员旁路，nil 和空都 = deny-all**。绑定在 CR，授权在 portal DB（`PUT /api/v1/knowledge/managed/bases/{id}/grants`，body `{"grants":[{"type":"user|team","id":"…"}]}`，全量替换）。
+   - 检索接口形状：`POST /api/v1/knowledge/employees/{name}/search`，body 必须含 `query` + `knowledge_base_ids` + `mode:"hybrid"` + `limit`(1–30)，否则 400。
+
+2. **新 operator 需要 KEDA CRD**：`issue158` 线的 operator 在 hibernation **关闭**时也会 `Delete(ScaledObject)`；集群没有 KEDA CRD 时 RESTMapper 报 `no matches for kind "ScaledObject" in version "keda.sh/v1alpha1"`，员工相位直接 `Error`。
+   - 修法：只装 KEDA 的 6 个 CRD 即可（`curl -L …/kedacore/keda/releases/download/v2.18.0/keda-2.18.0.yaml`，抽出 `kind: CustomResourceDefinition` 后用 **`kubectl apply --server-side`**；客户端 apply 会因注解体积/文件体量失败）。**装完必须重启 operator**，否则其 RESTMapper 缓存仍报同一个错。真正启用 hibernation 才需要完整 KEDA（集群已有 cert-manager）。
+   - operator 镜像：新的用 `docker.io/zhiyuan-local/knowledge-operator:issue158-gov-8b7f85c`（与 portal #59 同分支）；旧的 `zhiyuan/de-operator:0.9.0`（内网镜像仓的旧版本，仓地址见 `local/`）不认识 `bases`。
+   - 白名单落地路径：operator 渲染进 CM **`de-<name>-config`** 的 `config.yaml`（`extensions.middlewares[0].kwargs.knowledge_bases` + `knowledge_online_authorization: true`），靠 pod 模板注解 `zhiyuan.io/config-hash` 触发 Recreate；`de-<name>-extensions` 只放 `mcpServers`。
+
+## 两类角色的统一目标产品模型（2026-10-14，正文已在 zhiyuan-docs）
+
+**结论先行：截图那张表就是 `zhiyuan-docs` 的正文，逐字一致，不需要另存一份。**
+位置：`D:/rongxin/zhiyuan-docs/product/README.md` →「### 双角色定位与协作边界」，从第 30 行起。8 维表与尾注「主动性是责任与触发规则的组合，不以 DeerFlow 完全被动、Pi Durable 天然自主作为产品边界」完全相同。
+
+**要点（正文已写，不需要从截图推导）**
+
+- 数字员工：可**配属小组、部门或个人**（不再只是部门）；运行于**普通容器**（DeerFlow）；「配属不改变为个人 FC 的子实例」。
+- 个人搭档：一个账号对应一个 **PersonalWorkspace**；同账号多个 **Pi Durable 实例**同属一个工作区、**共享一台 FC 虚拟机**；新建搭档复用工作区，不按搭档新建 FC。
+- **触发方式不再是「被动等待调用」**：数字员工「接收专业任务，也可按已配置职责响应时间或业务事件」；个人搭档「接收个人交办，在授权目标内根据时间、依赖和业务事件继续推进」。主动与否由**责任 + 触发规则**决定，不是运行时的天然属性。
+- 相关需求编号：**FR-CP-08～15、FR-LC-11**（另见 FR-LC-05 临时实例）。
+
+**同批（2026-10-10～14）新增或更新的正文**
+
+| 文档 | 内容 |
+| --- | --- |
+| `product/README.md#双角色定位与协作边界` | 统一目标产品模型 8 维表（= 截图内容） |
+| `product/README.md#配属、维护、服务与执行身份` | 配属对象 / 维护负责人 / 服务范围 / 执行授权**分别建模**；负责人不自动成为执行身份 |
+| `architecture/companion-runtime.md` | 运行时基座选型：Pod(P0) → Firecracker(P1) → 快照/多宿主(P2)；`PersonalWorkspace` CR 草案；**已决策（2026-10-13）个人搭档不做休眠、环境常驻单副本** |
+| `architecture/cloud-desktop-research/` | 云电脑组件对比、能力包清单、容量模型、工具契约与生命周期 |
+| `architecture/botui-experience.md` | 员工端组件边界与契约缺口（共享云电脑、例行安排、房间） |
+| `glossary.md` | 新增/改写术语：个人工作区、个人云电脑（每工作区一台 FC）、持续工作现场、FC/Firecracker microVM、Pi Durable、岗位记忆、搭档专项记忆 |
+
+**教训（本条已踩过，2026-10-14）**：`zhiyuan-docs` 更新很密，**本地落后 10 个提交就足以让结论反转**。当时按未 pull 的 `product/README.md` 判断「文档是旧版、触发方式仍是被动等待调用」，`git pull --ff-only` 之后发现正文早已是截图那一版。**引用该仓任何结论前先 pull，不要用本地缓存版下结论。**
+
 ## 待办 / 缺口
 
 - [ ] **公开仓凭据泄漏整改**：`whz-harness` 的 `agent-memory/personal.md`、本档案旧版曾写入 Artifactory 网页口令与 demo 管理员口令（已推到公开 GitHub）。已推送历史不重写 → 必须视为已泄漏：**轮换该口令**，并把真实值只放 `local/`；`personal.md` 的同类行待脱敏。
 - [ ] gateway 80 端口 400 定论（`[推测]` ai-proxy 层拒绝，需复验真实对话请求）
-- [ ] DeepSeek key 已入 WasmPlugin——轮换时机与归属（个人 key 还是项目 key）待与组长确认
+- [ ] DeepSeek key 已入 WasmPlugin——轮换时机与归属（个人 key 还是项目 key）待与组长确认。**2026-10-13 本机已把该 key 从 `aep-ai-proxy-glm` 换成 dummy（本地集群改指 llama.cpp），但旧 key 仍在回滚备份 `~/botui-backup/wasmplugins-*.yaml` 里、且已见于历史配置 → 仍须轮换**
 - [ ] ES（日志）：目前全方案无 Elasticsearch，日志走 PostgreSQL+Prometheus。是否引入 ES 待组长明确
 - [ ] WeKnora 独立账号与文档入库/检索验收（2026-10-08 续查：当前浏览器管理入口为本机 30163，跳转通过不等于内容检索通过）
 - [ ] `zhiyuanAaaS` 里未被任何代码引用的 shadcn 原语（`src/ui/components/ui/*`，19 个文件）是否删除 —— 待用户决定
