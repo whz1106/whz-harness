@@ -184,6 +184,31 @@ NodePort：30180 AEP 控制面 / 30181 网关 authorizer / 30182 AEP agent-contr
    - operator 镜像：新的用 `docker.io/zhiyuan-local/knowledge-operator:issue158-gov-8b7f85c`（与 portal #59 同分支）；旧的 `zhiyuan/de-operator:0.9.0`（内网镜像仓的旧版本，仓地址见 `local/`）不认识 `bases`。
    - 白名单落地路径：operator 渲染进 CM **`de-<name>-config`** 的 `config.yaml`（`extensions.middlewares[0].kwargs.knowledge_bases` + `knowledge_online_authorization: true`），靠 pod 模板注解 `zhiyuan.io/config-hash` 触发 Recreate；`de-<name>-extensions` 只放 `mcpServers`。
 
+## 两类角色的统一目标产品模型（2026-10-14，正文已在 zhiyuan-docs）
+
+**结论先行：截图那张表就是 `zhiyuan-docs` 的正文，逐字一致，不需要另存一份。**
+位置：`D:/rongxin/zhiyuan-docs/product/README.md` →「### 双角色定位与协作边界」，从第 30 行起。8 维表与尾注「主动性是责任与触发规则的组合，不以 DeerFlow 完全被动、Pi Durable 天然自主作为产品边界」完全相同。
+
+**要点（正文已写，不需要从截图推导）**
+
+- 数字员工：可**配属小组、部门或个人**（不再只是部门）；运行于**普通容器**（DeerFlow）；「配属不改变为个人 FC 的子实例」。
+- 个人搭档：一个账号对应一个 **PersonalWorkspace**；同账号多个 **Pi Durable 实例**同属一个工作区、**共享一台 FC 虚拟机**；新建搭档复用工作区，不按搭档新建 FC。
+- **触发方式不再是「被动等待调用」**：数字员工「接收专业任务，也可按已配置职责响应时间或业务事件」；个人搭档「接收个人交办，在授权目标内根据时间、依赖和业务事件继续推进」。主动与否由**责任 + 触发规则**决定，不是运行时的天然属性。
+- 相关需求编号：**FR-CP-08～15、FR-LC-11**（另见 FR-LC-05 临时实例）。
+
+**同批（2026-10-10～14）新增或更新的正文**
+
+| 文档 | 内容 |
+| --- | --- |
+| `product/README.md#双角色定位与协作边界` | 统一目标产品模型 8 维表（= 截图内容） |
+| `product/README.md#配属、维护、服务与执行身份` | 配属对象 / 维护负责人 / 服务范围 / 执行授权**分别建模**；负责人不自动成为执行身份 |
+| `architecture/companion-runtime.md` | 运行时基座选型：Pod(P0) → Firecracker(P1) → 快照/多宿主(P2)；`PersonalWorkspace` CR 草案；**已决策（2026-10-13）个人搭档不做休眠、环境常驻单副本** |
+| `architecture/cloud-desktop-research/` | 云电脑组件对比、能力包清单、容量模型、工具契约与生命周期 |
+| `architecture/botui-experience.md` | 员工端组件边界与契约缺口（共享云电脑、例行安排、房间） |
+| `glossary.md` | 新增/改写术语：个人工作区、个人云电脑（每工作区一台 FC）、持续工作现场、FC/Firecracker microVM、Pi Durable、岗位记忆、搭档专项记忆 |
+
+**教训（本条已踩过，2026-10-14）**：`zhiyuan-docs` 更新很密，**本地落后 10 个提交就足以让结论反转**。当时按未 pull 的 `product/README.md` 判断「文档是旧版、触发方式仍是被动等待调用」，`git pull --ff-only` 之后发现正文早已是截图那一版。**引用该仓任何结论前先 pull，不要用本地缓存版下结论。**
+
 ## 待办 / 缺口
 
 - [ ] **公开仓凭据泄漏整改**：`whz-harness` 的 `agent-memory/personal.md`、本档案旧版曾写入 Artifactory 网页口令与 demo 管理员口令（已推到公开 GitHub）。已推送历史不重写 → 必须视为已泄漏：**轮换该口令**，并把真实值只放 `local/`；`personal.md` 的同类行待脱敏。
