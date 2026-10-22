@@ -151,9 +151,10 @@ bash scripts/scan-sensitive.sh                     # 手工全库扫描（故意
 | `materials-intake` | 外部资料收编：分流、脱敏、登记、写标准 README |
 | `harness-memory` | 记忆读写流程与命令 |
 | `antd` | Ant Design 任务的本地 API/token/demo 查询；优先项目已安装版本 |
-| `git-pr-workflow` | 提交与 PR/MR 规范（`references/commit-pr-format.md`） |
+| `git-pr-workflow` | PR 管理者：领取写入 `.docs/pr-<N>-<slug>.md`、验收、合并、关 issue、清理分支/worktree；GitHub 与 GitLab 对等（提交规范见 `references/commit-pr-format.md`） |
 | `clarify-before-coding` | 澄清再动手：对齐意图/根因/解法后再改；小 PR；确认后可派 subagent |
 | `adversarial-code-review` | 对抗式审查：本 PR 问题 + 合并后新风险；只审不擅自改 |
+| `use-modern-go` | JetBrains Modern Go Guidelines：按目标项目 Go 版本查询现代写法；来源与安装版本见 `skills/use-modern-go/SOURCE.md` |
 | `antd` | Ant Design：组件 API/迁移/诊断（`@ant-design/cli`） |
 | `modelscope-api` | ModelScope OpenAPI、下载、发布、打包 |
 | `Deli_AutoResearch` | 长任务自治框架（状态文件、卡死检测、心跳看护） |
