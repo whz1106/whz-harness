@@ -54,6 +54,7 @@ Always enforce these rules:
 - Preserve staged, unstaged, and untracked user changes unless the user explicitly approves a destructive action.
 - When CI failure blocks merge or release and is tied to logic, provide a concrete cause and a concrete fix plan.
 - Every PR/MR this skill manages has a tracking document under `.docs/` before merge. No tracking document, no merge unless the user explicitly waives it.
+- The tracking document carries the original text verbatim: the issue or GitLab work item title, body, labels, author, and URL are pasted as-is into `## 原文`. Summaries and analysis go in their own sections; never replace the source text with a paraphrase.
 - Never report an acceptance criterion as passed without the command, output, or evidence that proves it.
 - A merged PR/MR is not closed work: the linked issue, its status label, the source branch, and the worktree must be closed out before reporting completion.
 
@@ -201,9 +202,11 @@ Steps:
 1. Read the PR/MR: title, description, source and target branch, commits, diff, current CI state, linked issues, and review comments.
 2. Confirm the platform and repository (`gh repo view` / `glab repo view` or the remote URL) — do not assume `origin`.
 3. Create the tracking document at `.docs/pr-<number>-<slug>.md` in the repository checkout (use the PR/MR number; `<slug>` is a short kebab-case version of the title). Reuse an existing document for the same number instead of creating a second one.
-4. Fill it from the template below: the problem the PR solves, the scope it does and does not cover, and the acceptance criteria that must be true before merge.
-5. Link the document from the PR/MR (description or a comment) so reviewers see the criteria that will be enforced.
-6. Report the claim, the document path, and any blocking gaps (no acceptance criteria derivable from the PR, missing linked issue, broken CI, target branch mismatch).
+4. Fetch the source text before writing anything: the PR/MR description plus every linked issue or GitLab work item. Use the API so the body is complete and exact (`gh issue view <N> --json title,body,labels,author,url`, `glab api projects/:id/issues/<iid>`, `glab api projects/:id/merge_requests/<iid>`); for GitLab work items use the issue endpoint, which returns the work item description.
+5. Open the document with an `## 原文` section and paste the original title, body, labels, author, and URL verbatim — Markdown preserved, nothing trimmed, no rewritten wording. When both an issue and a PR/MR exist, paste each with its own source heading.
+6. Fill the rest from the template below: the problem in your own analysis, the scope it does and does not cover, and the acceptance criteria that must be true before merge.
+7. Link the document from the PR/MR (description or a comment) so reviewers see the criteria that will be enforced.
+8. Report the claim, the document path, and any blocking gaps (no acceptance criteria derivable from the PR, missing linked issue, broken CI, target branch mismatch).
 
 The tracking document is a durable artifact: do not delete it after merge. It is the local record of what was agreed.
 
@@ -218,9 +221,27 @@ The tracking document is a durable artifact: do not delete it after merge. It is
 - 关联 issue：<#N 列表，或「无」>
 - 领取人 / 领取时间：<user> / <YYYY-MM-DD>
 
+## 原文
+
+> 逐字粘贴，不改写、不概括、不省略；每个来源单独一节。正文里的 Markdown 结构保持原样。
+
+### 来源：issue #<N> — <原标题>
+
+- 作者 / 标签 / 时间：<author> / <labels> / <YYYY-MM-DD>
+- 链接：<URL>
+
+<原 body 全文>
+
+### 来源：PR/MR !<N> — <原标题>
+
+- 作者 / 标签 / 时间：<author> / <labels> / <YYYY-MM-DD>
+- 链接：<URL>
+
+<原 body 全文>
+
 ## 背景与问题
 
-<这个 PR 要解决的问题，来自 issue 或用户描述的事实；区分事实与推测。>
+<基于原文的分析，区分事实与推测；不要把原文再概述一遍。>
 
 ## 范围
 
@@ -266,7 +287,7 @@ Before drafting PR content:
 3. Call out risk, verification, and whether a release cherry-pick is required.
 4. State the exact target branch.
 5. State the target-branch divergence and any merge or unpublished rebase performed.
-6. Point at the tracking document (`.docs/pr-<number>-<slug>.md`) and keep its acceptance criteria consistent with the PR description.
+6. Point at the tracking document (`.docs/pr-<number>-<slug>.md`) and keep its acceptance criteria consistent with the PR description. Re-read the linked issue/work item and refresh `## 原文` whenever the source text changed, so the pasted text matches what reviewers see.
 
 Use the repository's PR language requirements. Keep titles and descriptions concrete and include:
 
